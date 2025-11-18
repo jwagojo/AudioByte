@@ -6,7 +6,7 @@ function Home() {
     <div className="flex items-center justify-center min-h-[calc(100vh-8rem)]">
       <div className="max-w-4xl mx-auto px-4 text-center">
         <h1 className="font-ghrathe text-6xl md:text-8xl font-bold text-orange-500 mb-6">
-          AudioByte
+          AudioByte.
         </h1>
         <p className="text-xl md:text-2xl text-gray-300 mb-12">
           Discover, upload, and share your music with the world
