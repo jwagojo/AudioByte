@@ -317,7 +317,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "167ffdea293e3b23c8daa54253c94bb361dcd312c9ccc67333b031ef31c0f873.zip"
+     "S3Key": "211b9d77fb084d9016fc150f04406ba798bdf2bddd2fe82dcb6e8432785664e9.zip"
     },
     "Environment": {
      "Variables": {
@@ -345,7 +345,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "InfrastructureStack/UploadFunction/Resource",
-    "aws:asset:path": "asset.167ffdea293e3b23c8daa54253c94bb361dcd312c9ccc67333b031ef31c0f873",
+    "aws:asset:path": "asset.211b9d77fb084d9016fc150f04406ba798bdf2bddd2fe82dcb6e8432785664e9",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -486,7 +486,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "167ffdea293e3b23c8daa54253c94bb361dcd312c9ccc67333b031ef31c0f873.zip"
+     "S3Key": "211b9d77fb084d9016fc150f04406ba798bdf2bddd2fe82dcb6e8432785664e9.zip"
     },
     "Environment": {
      "Variables": {
@@ -514,7 +514,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "InfrastructureStack/ListFunction/Resource",
-    "aws:asset:path": "asset.167ffdea293e3b23c8daa54253c94bb361dcd312c9ccc67333b031ef31c0f873",
+    "aws:asset:path": "asset.211b9d77fb084d9016fc150f04406ba798bdf2bddd2fe82dcb6e8432785664e9",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -541,415 +541,339 @@
     "aws:cdk:path": "InfrastructureStack/ListFunction/LogGroup/Resource"
    }
   },
-  "AudioByteApiCEDF49D3": {
-   "Type": "AWS::ApiGateway::RestApi",
+  "AudioByteGraphQLAA2EE0CC": {
+   "Type": "AWS::AppSync::GraphQLApi",
    "Properties": {
-    "Name": "audiobyte-api-6203"
+    "AuthenticationType": "API_KEY",
+    "Name": "audiobyte-graphql-6203",
+    "XrayEnabled": true
    },
    "Metadata": {
-    "aws:cdk:path": "InfrastructureStack/AudioByteApi/Resource"
+    "aws:cdk:path": "InfrastructureStack/AudioByteGraphQL/Resource"
    }
   },
-  "AudioByteApiDeployment206EDF81cb1ac2a21bef259a0f19bf21a4a3ba53": {
-   "Type": "AWS::ApiGateway::Deployment",
+  "AudioByteGraphQLSchema9ED22681": {
+   "Type": "AWS::AppSync::GraphQLSchema",
    "Properties": {
-    "Description": "Automatically created by the RestApi construct",
-    "RestApiId": {
-     "Ref": "AudioByteApiCEDF49D3"
+    "ApiId": {
+     "Fn::GetAtt": [
+      "AudioByteGraphQLAA2EE0CC",
+      "ApiId"
+     ]
+    },
+    "Definition": "type Music {\r\n  music_id: ID!\r\n  title: String!\r\n  artist: String\r\n  album: String\r\n  duration: Int\r\n  file_url: String!\r\n  uploaded_at: AWSDateTime!\r\n}\r\n\r\ntype Query {\r\n  listMusic: [Music]\r\n  getMusic(music_id: ID!): Music\r\n}\r\n\r\ntype Mutation {\r\n  createMusic(\r\n    title: String!\r\n    artist: String\r\n    album: String\r\n    duration: Int\r\n  ): MusicUploadResponse\r\n  deleteMusic(music_id: ID!): Music\r\n}\r\n\r\ntype MusicUploadResponse {\r\n  music_id: ID!\r\n  upload_url: String!\r\n  message: String!\r\n}\r\n\r\nschema {\r\n  query: Query\r\n  mutation: Mutation\r\n}\r\n"
+   },
+   "Metadata": {
+    "aws:cdk:path": "InfrastructureStack/AudioByteGraphQL/Schema"
+   }
+  },
+  "AudioByteGraphQLDefaultApiKey9282B2CE": {
+   "Type": "AWS::AppSync::ApiKey",
+   "Properties": {
+    "ApiId": {
+     "Fn::GetAtt": [
+      "AudioByteGraphQLAA2EE0CC",
+      "ApiId"
+     ]
     }
    },
    "DependsOn": [
-    "AudioByteApimusicGETEF511B64",
-    "AudioByteApimusicOPTIONSE14F5A17",
-    "AudioByteApimusicPOST2B138C37",
-    "AudioByteApimusic2452AE5E",
-    "AudioByteApiOPTIONSF7786E27"
+    "AudioByteGraphQLSchema9ED22681"
    ],
    "Metadata": {
-    "aws:cdk:path": "InfrastructureStack/AudioByteApi/Deployment/Resource",
-    "aws:cdk:do-not-refactor": true
+    "aws:cdk:path": "InfrastructureStack/AudioByteGraphQL/DefaultApiKey"
    }
   },
-  "AudioByteApiDeploymentStageprod7FF7121E": {
-   "Type": "AWS::ApiGateway::Stage",
+  "AudioByteGraphQLMusicTableDataSourceServiceRole5CFC0266": {
+   "Type": "AWS::IAM::Role",
    "Properties": {
-    "DeploymentId": {
-     "Ref": "AudioByteApiDeployment206EDF81cb1ac2a21bef259a0f19bf21a4a3ba53"
-    },
-    "RestApiId": {
-     "Ref": "AudioByteApiCEDF49D3"
-    },
-    "StageName": "prod"
-   },
-   "Metadata": {
-    "aws:cdk:path": "InfrastructureStack/AudioByteApi/DeploymentStage.prod/Resource"
-   }
-  },
-  "AudioByteApiOPTIONSF7786E27": {
-   "Type": "AWS::ApiGateway::Method",
-   "Properties": {
-    "ApiKeyRequired": false,
-    "AuthorizationType": "NONE",
-    "HttpMethod": "OPTIONS",
-    "Integration": {
-     "IntegrationResponses": [
+    "AssumeRolePolicyDocument": {
+     "Statement": [
       {
-       "ResponseParameters": {
-        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
-        "method.response.header.Access-Control-Allow-Origin": "'*'",
-        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
-       },
-       "StatusCode": "204"
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "appsync.amazonaws.com"
+       }
       }
      ],
-     "RequestTemplates": {
-      "application/json": "{ statusCode: 200 }"
-     },
-     "Type": "MOCK"
-    },
-    "MethodResponses": [
-     {
-      "ResponseParameters": {
-       "method.response.header.Access-Control-Allow-Headers": true,
-       "method.response.header.Access-Control-Allow-Origin": true,
-       "method.response.header.Access-Control-Allow-Methods": true
-      },
-      "StatusCode": "204"
-     }
-    ],
-    "ResourceId": {
-     "Fn::GetAtt": [
-      "AudioByteApiCEDF49D3",
-      "RootResourceId"
-     ]
-    },
-    "RestApiId": {
-     "Ref": "AudioByteApiCEDF49D3"
+     "Version": "2012-10-17"
     }
    },
    "Metadata": {
-    "aws:cdk:path": "InfrastructureStack/AudioByteApi/Default/OPTIONS/Resource"
+    "aws:cdk:path": "InfrastructureStack/AudioByteGraphQL/MusicTableDataSource/ServiceRole/Resource"
    }
   },
-  "AudioByteApimusic2452AE5E": {
-   "Type": "AWS::ApiGateway::Resource",
+  "AudioByteGraphQLMusicTableDataSourceServiceRoleDefaultPolicy363635D8": {
+   "Type": "AWS::IAM::Policy",
    "Properties": {
-    "ParentId": {
-     "Fn::GetAtt": [
-      "AudioByteApiCEDF49D3",
-      "RootResourceId"
-     ]
-    },
-    "PathPart": "music",
-    "RestApiId": {
-     "Ref": "AudioByteApiCEDF49D3"
-    }
-   },
-   "Metadata": {
-    "aws:cdk:path": "InfrastructureStack/AudioByteApi/Default/music/Resource"
-   }
-  },
-  "AudioByteApimusicOPTIONSE14F5A17": {
-   "Type": "AWS::ApiGateway::Method",
-   "Properties": {
-    "ApiKeyRequired": false,
-    "AuthorizationType": "NONE",
-    "HttpMethod": "OPTIONS",
-    "Integration": {
-     "IntegrationResponses": [
+    "PolicyDocument": {
+     "Statement": [
       {
-       "ResponseParameters": {
-        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
-        "method.response.header.Access-Control-Allow-Origin": "'*'",
-        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
-       },
-       "StatusCode": "204"
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable",
+        "dynamodb:GetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:PutItem",
+        "dynamodb:Query",
+        "dynamodb:Scan",
+        "dynamodb:UpdateItem"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "AudioByteMeta75211A69",
+          "Arn"
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
       }
      ],
-     "RequestTemplates": {
-      "application/json": "{ statusCode: 200 }"
-     },
-     "Type": "MOCK"
+     "Version": "2012-10-17"
     },
-    "MethodResponses": [
+    "PolicyName": "AudioByteGraphQLMusicTableDataSourceServiceRoleDefaultPolicy363635D8",
+    "Roles": [
      {
-      "ResponseParameters": {
-       "method.response.header.Access-Control-Allow-Headers": true,
-       "method.response.header.Access-Control-Allow-Origin": true,
-       "method.response.header.Access-Control-Allow-Methods": true
-      },
-      "StatusCode": "204"
+      "Ref": "AudioByteGraphQLMusicTableDataSourceServiceRole5CFC0266"
      }
-    ],
-    "ResourceId": {
-     "Ref": "AudioByteApimusic2452AE5E"
-    },
-    "RestApiId": {
-     "Ref": "AudioByteApiCEDF49D3"
-    }
+    ]
    },
    "Metadata": {
-    "aws:cdk:path": "InfrastructureStack/AudioByteApi/Default/music/OPTIONS/Resource"
+    "aws:cdk:path": "InfrastructureStack/AudioByteGraphQL/MusicTableDataSource/ServiceRole/DefaultPolicy/Resource"
    }
   },
-  "AudioByteApimusicPOSTApiPermissionInfrastructureStackAudioByteApi14940C41POSTmusic282746A9": {
-   "Type": "AWS::Lambda::Permission",
+  "AudioByteGraphQLMusicTableDataSource53C1A212": {
+   "Type": "AWS::AppSync::DataSource",
    "Properties": {
-    "Action": "lambda:InvokeFunction",
-    "FunctionName": {
+    "ApiId": {
      "Fn::GetAtt": [
-      "UploadFunction18838DD8",
+      "AudioByteGraphQLAA2EE0CC",
+      "ApiId"
+     ]
+    },
+    "DynamoDBConfig": {
+     "AwsRegion": {
+      "Ref": "AWS::Region"
+     },
+     "TableName": {
+      "Ref": "AudioByteMeta75211A69"
+     }
+    },
+    "Name": "MusicTableDataSource",
+    "ServiceRoleArn": {
+     "Fn::GetAtt": [
+      "AudioByteGraphQLMusicTableDataSourceServiceRole5CFC0266",
       "Arn"
      ]
     },
-    "Principal": "apigateway.amazonaws.com",
-    "SourceArn": {
-     "Fn::Join": [
-      "",
-      [
-       "arn:",
-       {
-        "Ref": "AWS::Partition"
-       },
-       ":execute-api:",
-       {
-        "Ref": "AWS::Region"
-       },
-       ":",
-       {
-        "Ref": "AWS::AccountId"
-       },
-       ":",
-       {
-        "Ref": "AudioByteApiCEDF49D3"
-       },
-       "/",
-       {
-        "Ref": "AudioByteApiDeploymentStageprod7FF7121E"
-       },
-       "/POST/music"
-      ]
-     ]
+    "Type": "AMAZON_DYNAMODB"
+   },
+   "Metadata": {
+    "aws:cdk:path": "InfrastructureStack/AudioByteGraphQL/MusicTableDataSource/Resource"
+   }
+  },
+  "AudioByteGraphQLUploadDataSourceServiceRoleF416BC1E": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "appsync.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
     }
    },
    "Metadata": {
-    "aws:cdk:path": "InfrastructureStack/AudioByteApi/Default/music/POST/ApiPermission.InfrastructureStackAudioByteApi14940C41.POST..music"
+    "aws:cdk:path": "InfrastructureStack/AudioByteGraphQL/UploadDataSource/ServiceRole/Resource"
    }
   },
-  "AudioByteApimusicPOSTApiPermissionTestInfrastructureStackAudioByteApi14940C41POSTmusic3E2E4151": {
-   "Type": "AWS::Lambda::Permission",
+  "AudioByteGraphQLUploadDataSourceServiceRoleDefaultPolicy186F39DA": {
+   "Type": "AWS::IAM::Policy",
    "Properties": {
-    "Action": "lambda:InvokeFunction",
-    "FunctionName": {
-     "Fn::GetAtt": [
-      "UploadFunction18838DD8",
-      "Arn"
-     ]
-    },
-    "Principal": "apigateway.amazonaws.com",
-    "SourceArn": {
-     "Fn::Join": [
-      "",
-      [
-       "arn:",
-       {
-        "Ref": "AWS::Partition"
-       },
-       ":execute-api:",
-       {
-        "Ref": "AWS::Region"
-       },
-       ":",
-       {
-        "Ref": "AWS::AccountId"
-       },
-       ":",
-       {
-        "Ref": "AudioByteApiCEDF49D3"
-       },
-       "/test-invoke-stage/POST/music"
-      ]
-     ]
-    }
-   },
-   "Metadata": {
-    "aws:cdk:path": "InfrastructureStack/AudioByteApi/Default/music/POST/ApiPermission.Test.InfrastructureStackAudioByteApi14940C41.POST..music"
-   }
-  },
-  "AudioByteApimusicPOST2B138C37": {
-   "Type": "AWS::ApiGateway::Method",
-   "Properties": {
-    "AuthorizationType": "NONE",
-    "HttpMethod": "POST",
-    "Integration": {
-     "IntegrationHttpMethod": "POST",
-     "Type": "AWS_PROXY",
-     "Uri": {
-      "Fn::Join": [
-       "",
-       [
-        "arn:",
-        {
-         "Ref": "AWS::Partition"
-        },
-        ":apigateway:",
-        {
-         "Ref": "AWS::Region"
-        },
-        ":lambda:path/2015-03-31/functions/",
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "lambda:InvokeFunction",
+       "Effect": "Allow",
+       "Resource": [
         {
          "Fn::GetAtt": [
           "UploadFunction18838DD8",
           "Arn"
          ]
         },
-        "/invocations"
-       ]
-      ]
-     }
-    },
-    "ResourceId": {
-     "Ref": "AudioByteApimusic2452AE5E"
-    },
-    "RestApiId": {
-     "Ref": "AudioByteApiCEDF49D3"
-    }
-   },
-   "Metadata": {
-    "aws:cdk:path": "InfrastructureStack/AudioByteApi/Default/music/POST/Resource"
-   }
-  },
-  "AudioByteApimusicGETApiPermissionInfrastructureStackAudioByteApi14940C41GETmusic0F435F95": {
-   "Type": "AWS::Lambda::Permission",
-   "Properties": {
-    "Action": "lambda:InvokeFunction",
-    "FunctionName": {
-     "Fn::GetAtt": [
-      "ListFunction7F4B561E",
-      "Arn"
-     ]
-    },
-    "Principal": "apigateway.amazonaws.com",
-    "SourceArn": {
-     "Fn::Join": [
-      "",
-      [
-       "arn:",
-       {
-        "Ref": "AWS::Partition"
-       },
-       ":execute-api:",
-       {
-        "Ref": "AWS::Region"
-       },
-       ":",
-       {
-        "Ref": "AWS::AccountId"
-       },
-       ":",
-       {
-        "Ref": "AudioByteApiCEDF49D3"
-       },
-       "/",
-       {
-        "Ref": "AudioByteApiDeploymentStageprod7FF7121E"
-       },
-       "/GET/music"
-      ]
-     ]
-    }
-   },
-   "Metadata": {
-    "aws:cdk:path": "InfrastructureStack/AudioByteApi/Default/music/GET/ApiPermission.InfrastructureStackAudioByteApi14940C41.GET..music"
-   }
-  },
-  "AudioByteApimusicGETApiPermissionTestInfrastructureStackAudioByteApi14940C41GETmusic3CE2CAEF": {
-   "Type": "AWS::Lambda::Permission",
-   "Properties": {
-    "Action": "lambda:InvokeFunction",
-    "FunctionName": {
-     "Fn::GetAtt": [
-      "ListFunction7F4B561E",
-      "Arn"
-     ]
-    },
-    "Principal": "apigateway.amazonaws.com",
-    "SourceArn": {
-     "Fn::Join": [
-      "",
-      [
-       "arn:",
-       {
-        "Ref": "AWS::Partition"
-       },
-       ":execute-api:",
-       {
-        "Ref": "AWS::Region"
-       },
-       ":",
-       {
-        "Ref": "AWS::AccountId"
-       },
-       ":",
-       {
-        "Ref": "AudioByteApiCEDF49D3"
-       },
-       "/test-invoke-stage/GET/music"
-      ]
-     ]
-    }
-   },
-   "Metadata": {
-    "aws:cdk:path": "InfrastructureStack/AudioByteApi/Default/music/GET/ApiPermission.Test.InfrastructureStackAudioByteApi14940C41.GET..music"
-   }
-  },
-  "AudioByteApimusicGETEF511B64": {
-   "Type": "AWS::ApiGateway::Method",
-   "Properties": {
-    "AuthorizationType": "NONE",
-    "HttpMethod": "GET",
-    "Integration": {
-     "IntegrationHttpMethod": "POST",
-     "Type": "AWS_PROXY",
-     "Uri": {
-      "Fn::Join": [
-       "",
-       [
-        "arn:",
         {
-         "Ref": "AWS::Partition"
-        },
-        ":apigateway:",
-        {
-         "Ref": "AWS::Region"
-        },
-        ":lambda:path/2015-03-31/functions/",
-        {
-         "Fn::GetAtt": [
-          "ListFunction7F4B561E",
-          "Arn"
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "UploadFunction18838DD8",
+             "Arn"
+            ]
+           },
+           ":*"
+          ]
          ]
-        },
-        "/invocations"
+        }
        ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "AudioByteGraphQLUploadDataSourceServiceRoleDefaultPolicy186F39DA",
+    "Roles": [
+     {
+      "Ref": "AudioByteGraphQLUploadDataSourceServiceRoleF416BC1E"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "InfrastructureStack/AudioByteGraphQL/UploadDataSource/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "AudioByteGraphQLUploadDataSource1C43E6B6": {
+   "Type": "AWS::AppSync::DataSource",
+   "Properties": {
+    "ApiId": {
+     "Fn::GetAtt": [
+      "AudioByteGraphQLAA2EE0CC",
+      "ApiId"
+     ]
+    },
+    "LambdaConfig": {
+     "LambdaFunctionArn": {
+      "Fn::GetAtt": [
+       "UploadFunction18838DD8",
+       "Arn"
       ]
      }
     },
-    "ResourceId": {
-     "Ref": "AudioByteApimusic2452AE5E"
+    "Name": "UploadDataSource",
+    "ServiceRoleArn": {
+     "Fn::GetAtt": [
+      "AudioByteGraphQLUploadDataSourceServiceRoleF416BC1E",
+      "Arn"
+     ]
     },
-    "RestApiId": {
-     "Ref": "AudioByteApiCEDF49D3"
-    }
+    "Type": "AWS_LAMBDA"
    },
    "Metadata": {
-    "aws:cdk:path": "InfrastructureStack/AudioByteApi/Default/music/GET/Resource"
+    "aws:cdk:path": "InfrastructureStack/AudioByteGraphQL/UploadDataSource/Resource"
+   }
+  },
+  "AudioByteGraphQLListMusicResolverEF7FDC7E": {
+   "Type": "AWS::AppSync::Resolver",
+   "Properties": {
+    "ApiId": {
+     "Fn::GetAtt": [
+      "AudioByteGraphQLAA2EE0CC",
+      "ApiId"
+     ]
+    },
+    "DataSourceName": "MusicTableDataSource",
+    "FieldName": "listMusic",
+    "Kind": "UNIT",
+    "RequestMappingTemplate": "{\"version\" : \"2017-02-28\", \"operation\" : \"Scan\", \"consistentRead\": false}",
+    "ResponseMappingTemplate": "$util.toJson($ctx.result.items)",
+    "TypeName": "Query"
+   },
+   "DependsOn": [
+    "AudioByteGraphQLMusicTableDataSource53C1A212",
+    "AudioByteGraphQLSchema9ED22681"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "InfrastructureStack/AudioByteGraphQL/ListMusicResolver/Resource"
+   }
+  },
+  "AudioByteGraphQLGetMusicResolver329DFA3C": {
+   "Type": "AWS::AppSync::Resolver",
+   "Properties": {
+    "ApiId": {
+     "Fn::GetAtt": [
+      "AudioByteGraphQLAA2EE0CC",
+      "ApiId"
+     ]
+    },
+    "DataSourceName": "MusicTableDataSource",
+    "FieldName": "getMusic",
+    "Kind": "UNIT",
+    "RequestMappingTemplate": "{\"version\": \"2017-02-28\", \"operation\": \"GetItem\", \"consistentRead\": false, \"key\": {\"music_id\": $util.dynamodb.toDynamoDBJson($ctx.args.music_id)}}",
+    "ResponseMappingTemplate": "$util.toJson($ctx.result)",
+    "TypeName": "Query"
+   },
+   "DependsOn": [
+    "AudioByteGraphQLMusicTableDataSource53C1A212",
+    "AudioByteGraphQLSchema9ED22681"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "InfrastructureStack/AudioByteGraphQL/GetMusicResolver/Resource"
+   }
+  },
+  "AudioByteGraphQLCreateMusicResolver7E510953": {
+   "Type": "AWS::AppSync::Resolver",
+   "Properties": {
+    "ApiId": {
+     "Fn::GetAtt": [
+      "AudioByteGraphQLAA2EE0CC",
+      "ApiId"
+     ]
+    },
+    "DataSourceName": "UploadDataSource",
+    "FieldName": "createMusic",
+    "Kind": "UNIT",
+    "TypeName": "Mutation"
+   },
+   "DependsOn": [
+    "AudioByteGraphQLSchema9ED22681",
+    "AudioByteGraphQLUploadDataSource1C43E6B6"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "InfrastructureStack/AudioByteGraphQL/CreateMusicResolver/Resource"
+   }
+  },
+  "AudioByteGraphQLDeleteMusicResolver7105B912": {
+   "Type": "AWS::AppSync::Resolver",
+   "Properties": {
+    "ApiId": {
+     "Fn::GetAtt": [
+      "AudioByteGraphQLAA2EE0CC",
+      "ApiId"
+     ]
+    },
+    "DataSourceName": "MusicTableDataSource",
+    "FieldName": "deleteMusic",
+    "Kind": "UNIT",
+    "RequestMappingTemplate": "{\"version\": \"2017-02-28\", \"operation\": \"DeleteItem\", \"key\": {\"music_id\": $util.dynamodb.toDynamoDBJson($ctx.args.music_id)}}",
+    "ResponseMappingTemplate": "$util.toJson($ctx.result)",
+    "TypeName": "Mutation"
+   },
+   "DependsOn": [
+    "AudioByteGraphQLMusicTableDataSource53C1A212",
+    "AudioByteGraphQLSchema9ED22681"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "InfrastructureStack/AudioByteGraphQL/DeleteMusicResolver/Resource"
    }
   },
   "CDKMetadata": {
    "Type": "AWS::CDK::Metadata",
    "Properties": {
-    "Analytics": "v2:deflate64:H4sIAAAAAAAA/+1WbW/cNgz+LdXHQvHWBsWA+3Z5WRu0XQ6X2yfjUPAsnk+NLLkSncAT/N8LvdjntGmHYcgwFP1iyyT1kHwo0npZvHzxqvj1Gdy7k0rcnii5K/wNQXXL4d598O608GdddYtUegYdmQtUSHi9+4gVObYg2yFnu2jxBzTIFuw546wy1rFF2KKUuUfxHulgRBCx1Z8bxtnry/B8c7m8YFs+Wl1bWUvtMkYWvkEQaJNw2HJmsTF3oFZGyapnCybQkTU9G7hnIMS5sW7dKXwK7zxqnrPtsOXne5144emV4il95mIMdzJL+mx8Bg7L7cBFr6ExYlf4DewUlp61YEmSNPot9mzhmT5ySn0bljchjm+RwBkFoKkSKYIIPnAFzU5A4X/vdBVclJ6hvpPW6AY1ZS/7rHxQTDEuD6CFQpu/bKdJjp4S/ZdzwHLi6++U/4s4IlcjOWG9QttI56TRA5fQFH5tYpHAua5BcRYr1FqpK9mCWlaV6ab4k03YsIx44wlqQEONIlZOYmqSuaxf2mw7Rrsxq9HFWO/SZy0RVIcrraTGSTcl+l3l93F/6ARjnUPgPDdtyGeE25ig+crL12IhbggIwyFys4AfEz8xfswnpTJwd/oBnENyxTK8uDK1K/w7U7+2pmtLz1ReHmcEf0wYQcdtA4dW1kB4D33h1+ho2crSM4F76BSFmbuyuFeyPtB1G06DCycnztBHxuo0j9OJsQnvC9/ZC7/AVpk+5BsdusrKdjpvnEErxymABFIfzd18HmzMO1PLCtSVeEDm08ljEsdo+A1BjTGFUTRLNir5Gp3pbIXx9xAOAk9MlT5wFFXj/CNqky4LpCasLcyIMbM6dHQwVv4VBub862rcPYri/k36z8TSQCvfYr/GT520KNhiD8rht+w5a2JIa3St0S73viOgzp0fZ7fN6hVYaJCO//Yhc/n+Aco/BeE/yfqvyMrt9S8RYgOkDVMHpJvQ8TbQAh1WYOctM5oOAz/vHJlm2hs7Z2bxhX5lzZ0UaEOX8TgkQ/dJXfM5wnTXC0jXHbUdDXzV08HoX06LF6fFb88+OilP8t2jWKf3Z1fXdsxQCwAA"
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/+1WTW/bMAz9LdWxUL21wTAgN+djbdFuzZLsMBhBwVhMolaWPElO5wn+74NkO3X6tcsKdMAOiSU+6pF6lEyfRCfHH6L3B3BnjlJ2eyT4MnIzC+kthTtz7UwvcoMivUWbOAKFVSMUaPFqeYOpNaRvdYGULIPHF8iQ9MkhoSRV2pC+XyKEukP2Ge1GMW8ik29zQsnp2P+fjeMRWdDW60rzNZem4WiMZwgMdW2sFpRozNQWxEQJnpakTxgaq1VJKuoIMDZU2kwLga8RnQbkkCyqBR2uZK0LrR91PolrtGjT3bnVeOM8AIPJoqKslJAptozcHJYCE0dy0JZbruQFlqTviLzX1Ja5H858Hs+JQIn1RLtK1BkE8ooKyJYMIvepkKkPkTiCcsu1khlK20RZNeBeMVk73IBkAnUz04W0vI1Uyz/uEiY7vf4Evok8glatOBXlkEVuqkJZwJgiQzYINck1lynPQcRpqopdxrWPXxAHhvbMZCBhjSzUimN9Lbq2MtaNb5vfXE3aEG2FE9eg1kK6OZeCS9xhu629CL7M+3+Dz23wVXN+e1mFW+Cj0eaV5pNoF8yVRx7xPDYzNrNg0V8x00npKfM/w/+3iILCtbgVNb1rMAatiWL/oEKtTeQu1fpUqyJPHBHN8P6dTp8yBtJ2WUUhz00p08idasg3P0Sc82Svm0BhN0rzX+CP1FDJFV/7M8hwBYWwcRf19j33ed2J4sn59cX4uz+LxKQbzKDh/qmhHEvfdFj9hdAqEZxGmKNkKB9e3tdAgypBgq+Xcc47s3qFN8Q5v8CSjkIvHi1HYGGmCp2iBzuzy9A+O4YpGiW2qMOFacZVRYeFsSrzBu8V8mg9atY9fKLVljPU/pOAhiMws7Dmck27DPTBLzBeFTYvbEUnpd0o+a4XHfeijwc3hvOjpiNG0/r5G0FDRurmCQAA"
    },
    "Metadata": {
     "aws:cdk:path": "InfrastructureStack/CDKMetadata/Default"
@@ -958,29 +882,21 @@
   }
  },
  "Outputs": {
-  "AudioByteApiEndpoint7E0AF281": {
+  "GraphQLApiUrl": {
+   "Description": "GraphQL API URL",
    "Value": {
-    "Fn::Join": [
-     "",
-     [
-      "https://",
-      {
-       "Ref": "AudioByteApiCEDF49D3"
-      },
-      ".execute-api.",
-      {
-       "Ref": "AWS::Region"
-      },
-      ".",
-      {
-       "Ref": "AWS::URLSuffix"
-      },
-      "/",
-      {
-       "Ref": "AudioByteApiDeploymentStageprod7FF7121E"
-      },
-      "/"
-     ]
+    "Fn::GetAtt": [
+     "AudioByteGraphQLAA2EE0CC",
+     "GraphQLUrl"
+    ]
+   }
+  },
+  "GraphQLApiKey": {
+   "Description": "GraphQL API Key",
+   "Value": {
+    "Fn::GetAtt": [
+     "AudioByteGraphQLDefaultApiKey9282B2CE",
+     "ApiKey"
     ]
    }
   }

@@ -18,7 +18,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-${AWS::Region}",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/994d9120516836968d8d1c219f5cf9a8fc567f737cf5314983ea5c1c1bb05dca.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/64e3156886af9cf87ff66d73c90fdb13f792d38e226843e7dbf354566b6a06ca.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -462,37 +462,85 @@
             "data": "ListFunctionLogGroup0A803594"
           }
         ],
-        "/InfrastructureStack/AudioByteApi": [
+        "/InfrastructureStack/AudioByteGraphQL": [
           {
             "type": "aws:cdk:analytics:construct",
             "data": {
-              "defaultCorsPreflightOptions": {
-                "allowOrigins": "*",
-                "allowMethods": "*"
+              "name": "*",
+              "authorizationConfig": {
+                "defaultAuthorization": {
+                  "authorizationType": "API_KEY"
+                }
               },
-              "restApiName": "*"
+              "schema": "*",
+              "xrayEnabled": true
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addSchemaDependency": [
+                "*"
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addSchemaDependency": [
+                "*"
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addSchemaDependency": [
+                "*"
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addSchemaDependency": [
+                "*"
+              ]
             }
           }
         ],
-        "/InfrastructureStack/AudioByteApi/Resource": [
+        "/InfrastructureStack/AudioByteGraphQL/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "AudioByteApiCEDF49D3"
+            "data": "AudioByteGraphQLAA2EE0CC"
           }
         ],
-        "/InfrastructureStack/AudioByteApi/Deployment": [
+        "/InfrastructureStack/AudioByteGraphQL/Schema": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AudioByteGraphQLSchema9ED22681"
+          }
+        ],
+        "/InfrastructureStack/AudioByteGraphQL/DefaultApiKey": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AudioByteGraphQLDefaultApiKey9282B2CE"
+          }
+        ],
+        "/InfrastructureStack/AudioByteGraphQL/MusicTableDataSource/ServiceRole": [
           {
             "type": "aws:cdk:analytics:construct",
             "data": {
-              "description": "*",
-              "api": "*",
-              "retainDeployments": "*"
+              "assumedBy": {
+                "principalAccount": "*",
+                "assumeRoleAction": "*"
+              }
             }
           },
           {
             "type": "aws:cdk:analytics:method",
             "data": {
-              "addToLogicalId": [
+              "addToPrincipalPolicy": [
                 {}
               ]
             }
@@ -500,221 +548,197 @@
           {
             "type": "aws:cdk:analytics:method",
             "data": {
-              "addToLogicalId": [
-                {}
+              "attachInlinePolicy": [
+                "*"
               ]
             }
           },
           {
             "type": "aws:cdk:analytics:method",
             "data": {
-              "addToLogicalId": [
-                {}
-              ]
-            }
-          },
-          {
-            "type": "aws:cdk:analytics:method",
-            "data": {
-              "addToLogicalId": [
-                {}
-              ]
-            }
-          },
-          {
-            "type": "aws:cdk:analytics:method",
-            "data": {
-              "addToLogicalId": [
-                {}
+              "attachInlinePolicy": [
+                "*"
               ]
             }
           }
         ],
-        "/InfrastructureStack/AudioByteApi/Deployment/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "AudioByteApiDeployment206EDF81cb1ac2a21bef259a0f19bf21a4a3ba53"
-          }
-        ],
-        "/InfrastructureStack/AudioByteApi/DeploymentStage.prod": [
-          {
-            "type": "aws:cdk:analytics:construct",
-            "data": {
-              "deployment": "*"
-            }
-          }
-        ],
-        "/InfrastructureStack/AudioByteApi/DeploymentStage.prod/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "AudioByteApiDeploymentStageprod7FF7121E"
-          }
-        ],
-        "/InfrastructureStack/AudioByteApi/Endpoint": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "AudioByteApiEndpoint7E0AF281"
-          }
-        ],
-        "/InfrastructureStack/AudioByteApi/Default": [
+        "/InfrastructureStack/AudioByteGraphQL/MusicTableDataSource/ServiceRole/ImportServiceRole": [
           {
             "type": "aws:cdk:analytics:construct",
             "data": "*"
           }
         ],
-        "/InfrastructureStack/AudioByteApi/Default/OPTIONS": [
+        "/InfrastructureStack/AudioByteGraphQL/MusicTableDataSource/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AudioByteGraphQLMusicTableDataSourceServiceRole5CFC0266"
+          }
+        ],
+        "/InfrastructureStack/AudioByteGraphQL/MusicTableDataSource/ServiceRole/DefaultPolicy": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": "*"
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "attachToRole": [
+                "*"
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "attachToRole": [
+                "*"
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addStatements": [
+                {}
+              ]
+            }
+          }
+        ],
+        "/InfrastructureStack/AudioByteGraphQL/MusicTableDataSource/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AudioByteGraphQLMusicTableDataSourceServiceRoleDefaultPolicy363635D8"
+          }
+        ],
+        "/InfrastructureStack/AudioByteGraphQL/MusicTableDataSource/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AudioByteGraphQLMusicTableDataSource53C1A212"
+          }
+        ],
+        "/InfrastructureStack/AudioByteGraphQL/UploadDataSource/ServiceRole": [
           {
             "type": "aws:cdk:analytics:construct",
             "data": {
-              "resource": "*",
-              "httpMethod": "*",
-              "integration": "*",
-              "options": {
-                "authorizer": {
-                  "authorizerId": "*",
-                  "authorizationType": "*"
-                },
-                "apiKeyRequired": false,
-                "authorizationType": "*",
-                "methodResponses": [
-                  {
-                    "statusCode": "*",
-                    "responseParameters": "*"
-                  }
-                ]
+              "assumedBy": {
+                "principalAccount": "*",
+                "assumeRoleAction": "*"
               }
             }
           },
           {
             "type": "aws:cdk:analytics:method",
             "data": {
-              "addMethodResponse": [
-                {
-                  "statusCode": "*",
-                  "responseParameters": "*"
-                }
+              "addToPrincipalPolicy": [
+                {}
               ]
-            }
-          }
-        ],
-        "/InfrastructureStack/AudioByteApi/Default/OPTIONS/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "AudioByteApiOPTIONSF7786E27"
-          }
-        ],
-        "/InfrastructureStack/AudioByteApi/Default/music": [
-          {
-            "type": "aws:cdk:analytics:construct",
-            "data": {
-              "parent": "*",
-              "pathPart": "*"
-            }
-          }
-        ],
-        "/InfrastructureStack/AudioByteApi/Default/music/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "AudioByteApimusic2452AE5E"
-          }
-        ],
-        "/InfrastructureStack/AudioByteApi/Default/music/OPTIONS": [
-          {
-            "type": "aws:cdk:analytics:construct",
-            "data": {
-              "resource": "*",
-              "httpMethod": "*",
-              "integration": "*",
-              "options": {
-                "authorizer": {
-                  "authorizerId": "*",
-                  "authorizationType": "*"
-                },
-                "apiKeyRequired": false,
-                "authorizationType": "*",
-                "methodResponses": [
-                  {
-                    "statusCode": "*",
-                    "responseParameters": "*"
-                  }
-                ]
-              }
             }
           },
           {
             "type": "aws:cdk:analytics:method",
             "data": {
-              "addMethodResponse": [
-                {
-                  "statusCode": "*",
-                  "responseParameters": "*"
-                }
+              "attachInlinePolicy": [
+                "*"
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "attachInlinePolicy": [
+                "*"
               ]
             }
           }
         ],
-        "/InfrastructureStack/AudioByteApi/Default/music/OPTIONS/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "AudioByteApimusicOPTIONSE14F5A17"
-          }
-        ],
-        "/InfrastructureStack/AudioByteApi/Default/music/POST": [
+        "/InfrastructureStack/AudioByteGraphQL/UploadDataSource/ServiceRole/ImportServiceRole": [
           {
             "type": "aws:cdk:analytics:construct",
+            "data": "*"
+          }
+        ],
+        "/InfrastructureStack/AudioByteGraphQL/UploadDataSource/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AudioByteGraphQLUploadDataSourceServiceRoleF416BC1E"
+          }
+        ],
+        "/InfrastructureStack/AudioByteGraphQL/UploadDataSource/ServiceRole/DefaultPolicy": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": "*"
+          },
+          {
+            "type": "aws:cdk:analytics:method",
             "data": {
-              "resource": "*",
-              "httpMethod": "*",
-              "integration": "*",
-              "options": "*"
+              "attachToRole": [
+                "*"
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "attachToRole": [
+                "*"
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addStatements": [
+                {}
+              ]
             }
           }
         ],
-        "/InfrastructureStack/AudioByteApi/Default/music/POST/ApiPermission.InfrastructureStackAudioByteApi14940C41.POST..music": [
+        "/InfrastructureStack/AudioByteGraphQL/UploadDataSource/ServiceRole/DefaultPolicy/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "AudioByteApimusicPOSTApiPermissionInfrastructureStackAudioByteApi14940C41POSTmusic282746A9"
+            "data": "AudioByteGraphQLUploadDataSourceServiceRoleDefaultPolicy186F39DA"
           }
         ],
-        "/InfrastructureStack/AudioByteApi/Default/music/POST/ApiPermission.Test.InfrastructureStackAudioByteApi14940C41.POST..music": [
+        "/InfrastructureStack/AudioByteGraphQL/UploadDataSource/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "AudioByteApimusicPOSTApiPermissionTestInfrastructureStackAudioByteApi14940C41POSTmusic3E2E4151"
+            "data": "AudioByteGraphQLUploadDataSource1C43E6B6"
           }
         ],
-        "/InfrastructureStack/AudioByteApi/Default/music/POST/Resource": [
+        "/InfrastructureStack/AudioByteGraphQL/ListMusicResolver/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "AudioByteApimusicPOST2B138C37"
+            "data": "AudioByteGraphQLListMusicResolverEF7FDC7E"
           }
         ],
-        "/InfrastructureStack/AudioByteApi/Default/music/GET": [
-          {
-            "type": "aws:cdk:analytics:construct",
-            "data": {
-              "resource": "*",
-              "httpMethod": "*",
-              "integration": "*",
-              "options": "*"
-            }
-          }
-        ],
-        "/InfrastructureStack/AudioByteApi/Default/music/GET/ApiPermission.InfrastructureStackAudioByteApi14940C41.GET..music": [
+        "/InfrastructureStack/AudioByteGraphQL/GetMusicResolver/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "AudioByteApimusicGETApiPermissionInfrastructureStackAudioByteApi14940C41GETmusic0F435F95"
+            "data": "AudioByteGraphQLGetMusicResolver329DFA3C"
           }
         ],
-        "/InfrastructureStack/AudioByteApi/Default/music/GET/ApiPermission.Test.InfrastructureStackAudioByteApi14940C41.GET..music": [
+        "/InfrastructureStack/AudioByteGraphQL/CreateMusicResolver/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "AudioByteApimusicGETApiPermissionTestInfrastructureStackAudioByteApi14940C41GETmusic3CE2CAEF"
+            "data": "AudioByteGraphQLCreateMusicResolver7E510953"
           }
         ],
-        "/InfrastructureStack/AudioByteApi/Default/music/GET/Resource": [
+        "/InfrastructureStack/AudioByteGraphQL/DeleteMusicResolver/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "AudioByteApimusicGETEF511B64"
+            "data": "AudioByteGraphQLDeleteMusicResolver7105B912"
+          }
+        ],
+        "/InfrastructureStack/GraphQLApiUrl": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "GraphQLApiUrl"
+          }
+        ],
+        "/InfrastructureStack/GraphQLApiKey": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "GraphQLApiKey"
           }
         ],
         "/InfrastructureStack/CDKMetadata/Default": [

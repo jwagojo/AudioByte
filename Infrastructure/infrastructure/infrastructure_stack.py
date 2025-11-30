@@ -1,12 +1,14 @@
 from aws_cdk import (
     Stack,
     RemovalPolicy,
+    CfnOutput,
     aws_s3 as s3,
     aws_dynamodb as dynamodb,
     aws_lambda as _lambda,
-    aws_apigateway as apigateway,
+    aws_appsync as appsync,
 )
 from constructs import Construct
+import os
 
 class InfrastructureStack(Stack):
 
@@ -70,15 +72,60 @@ class InfrastructureStack(Stack):
         music_table.grant_read_write_data(upload_fn)
         music_table.grant_read_data(list_fn)
 
-        api = apigateway.RestApi(self, "AudioByteApi",
-            rest_api_name="audiobyte-api-6203",
-            default_cors_preflight_options={
-                "allow_origins": apigateway.Cors.ALL_ORIGINS,
-                "allow_methods": apigateway.Cors.ALL_METHODS
-            }
+        # GraphQL API with AppSync
+        graphql_api = appsync.GraphqlApi(self, "AudioByteGraphQL",
+            name="audiobyte-graphql-6203",
+            schema=appsync.SchemaFile.from_asset(os.path.join(os.path.dirname(__file__), "..", "schema.graphql")),
+            authorization_config=appsync.AuthorizationConfig(
+                default_authorization=appsync.AuthorizationMode(
+                    authorization_type=appsync.AuthorizationType.API_KEY
+                )
+            ),
+            xray_enabled=True
         )
 
-        music_resource = api.root.add_resource("music")
-        music_resource.add_method("POST", apigateway.LambdaIntegration(upload_fn))
+        music_data_source = graphql_api.add_dynamo_db_data_source(
+            "MusicTableDataSource",
+            music_table
+        )
+
+        upload_data_source = graphql_api.add_lambda_data_source(
+            "UploadDataSource",
+            upload_fn
+        )
+
+        music_data_source.create_resolver("ListMusicResolver",
+            type_name="Query",
+            field_name="listMusic",
+            request_mapping_template=appsync.MappingTemplate.dynamo_db_scan_table(),
+            response_mapping_template=appsync.MappingTemplate.dynamo_db_result_list()
+        )
+
+        music_data_source.create_resolver("GetMusicResolver",
+            type_name="Query",
+            field_name="getMusic",
+            request_mapping_template=appsync.MappingTemplate.dynamo_db_get_item("music_id", "music_id"),
+            response_mapping_template=appsync.MappingTemplate.dynamo_db_result_item()
+        )
+
+        upload_data_source.create_resolver("CreateMusicResolver",
+            type_name="Mutation",
+            field_name="createMusic"
+        )
+
+        music_data_source.create_resolver("DeleteMusicResolver",
+            type_name="Mutation",
+            field_name="deleteMusic",
+            request_mapping_template=appsync.MappingTemplate.dynamo_db_delete_item("music_id", "music_id"),
+            response_mapping_template=appsync.MappingTemplate.dynamo_db_result_item()
+        )
+
+        CfnOutput(self, "GraphQLApiUrl",
+            value=graphql_api.graphql_url,
+            description="GraphQL API URL"
+        )
         
-        music_resource.add_method("GET", apigateway.LambdaIntegration(list_fn))
+        CfnOutput(self, "GraphQLApiKey",
+            value=graphql_api.api_key or "No API Key",
+            description="GraphQL API Key"
+        )
