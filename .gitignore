@@ -2,6 +2,11 @@
 
 #######infas
 
+# CDK
+cdk.out/
+*.pyc
+__pycache__/
+
 # Logs
 logs
 *.log

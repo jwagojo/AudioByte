@@ -317,7 +317,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "211b9d77fb084d9016fc150f04406ba798bdf2bddd2fe82dcb6e8432785664e9.zip"
+     "S3Key": "997f41e8660aad1742d68b467084c5385972559117f03b62336e50b9bbb18b53.zip"
     },
     "Environment": {
      "Variables": {
@@ -345,7 +345,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "InfrastructureStack/UploadFunction/Resource",
-    "aws:asset:path": "asset.211b9d77fb084d9016fc150f04406ba798bdf2bddd2fe82dcb6e8432785664e9",
+    "aws:asset:path": "asset.997f41e8660aad1742d68b467084c5385972559117f03b62336e50b9bbb18b53",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -486,7 +486,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "211b9d77fb084d9016fc150f04406ba798bdf2bddd2fe82dcb6e8432785664e9.zip"
+     "S3Key": "997f41e8660aad1742d68b467084c5385972559117f03b62336e50b9bbb18b53.zip"
     },
     "Environment": {
      "Variables": {
@@ -514,7 +514,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "InfrastructureStack/ListFunction/Resource",
-    "aws:asset:path": "asset.211b9d77fb084d9016fc150f04406ba798bdf2bddd2fe82dcb6e8432785664e9",
+    "aws:asset:path": "asset.997f41e8660aad1742d68b467084c5385972559117f03b62336e50b9bbb18b53",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -561,7 +561,7 @@
       "ApiId"
      ]
     },
-    "Definition": "type Music {\r\n  music_id: ID!\r\n  title: String!\r\n  artist: String\r\n  album: String\r\n  duration: Int\r\n  file_url: String!\r\n  uploaded_at: AWSDateTime!\r\n}\r\n\r\ntype Query {\r\n  listMusic: [Music]\r\n  getMusic(music_id: ID!): Music\r\n}\r\n\r\ntype Mutation {\r\n  createMusic(\r\n    title: String!\r\n    artist: String\r\n    album: String\r\n    duration: Int\r\n  ): MusicUploadResponse\r\n  deleteMusic(music_id: ID!): Music\r\n}\r\n\r\ntype MusicUploadResponse {\r\n  music_id: ID!\r\n  upload_url: String!\r\n  message: String!\r\n}\r\n\r\nschema {\r\n  query: Query\r\n  mutation: Mutation\r\n}\r\n"
+    "Definition": "type Music {\r\n  music_id: ID!\r\n  title: String!\r\n  artist: String\r\n  album: String\r\n  duration: Int\r\n  file_url: String!\r\n  stream_url: String\r\n  uploaded_at: AWSDateTime!\r\n}\r\n\r\ntype Query {\r\n  listMusic: [Music]\r\n  getMusic(music_id: ID!): Music\r\n}\r\n\r\ntype Mutation {\r\n  createMusic(\r\n    title: String!\r\n    artist: String\r\n    album: String\r\n    duration: Int\r\n  ): MusicUploadResponse\r\n  deleteMusic(music_id: ID!): Music\r\n}\r\n\r\ntype MusicUploadResponse {\r\n  music_id: ID!\r\n  upload_url: String!\r\n  message: String!\r\n}\r\n\r\nschema {\r\n  query: Query\r\n  mutation: Mutation\r\n}\r\n"
    },
    "Metadata": {
     "aws:cdk:path": "InfrastructureStack/AudioByteGraphQL/Schema"
@@ -776,6 +776,101 @@
     "aws:cdk:path": "InfrastructureStack/AudioByteGraphQL/UploadDataSource/Resource"
    }
   },
+  "AudioByteGraphQLListDataSourceServiceRole8133182F": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "appsync.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "InfrastructureStack/AudioByteGraphQL/ListDataSource/ServiceRole/Resource"
+   }
+  },
+  "AudioByteGraphQLListDataSourceServiceRoleDefaultPolicy6849BA19": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "lambda:InvokeFunction",
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "ListFunction7F4B561E",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "ListFunction7F4B561E",
+             "Arn"
+            ]
+           },
+           ":*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "AudioByteGraphQLListDataSourceServiceRoleDefaultPolicy6849BA19",
+    "Roles": [
+     {
+      "Ref": "AudioByteGraphQLListDataSourceServiceRole8133182F"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "InfrastructureStack/AudioByteGraphQL/ListDataSource/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "AudioByteGraphQLListDataSourceCDF21185": {
+   "Type": "AWS::AppSync::DataSource",
+   "Properties": {
+    "ApiId": {
+     "Fn::GetAtt": [
+      "AudioByteGraphQLAA2EE0CC",
+      "ApiId"
+     ]
+    },
+    "LambdaConfig": {
+     "LambdaFunctionArn": {
+      "Fn::GetAtt": [
+       "ListFunction7F4B561E",
+       "Arn"
+      ]
+     }
+    },
+    "Name": "ListDataSource",
+    "ServiceRoleArn": {
+     "Fn::GetAtt": [
+      "AudioByteGraphQLListDataSourceServiceRole8133182F",
+      "Arn"
+     ]
+    },
+    "Type": "AWS_LAMBDA"
+   },
+   "Metadata": {
+    "aws:cdk:path": "InfrastructureStack/AudioByteGraphQL/ListDataSource/Resource"
+   }
+  },
   "AudioByteGraphQLListMusicResolverEF7FDC7E": {
    "Type": "AWS::AppSync::Resolver",
    "Properties": {
@@ -785,15 +880,13 @@
       "ApiId"
      ]
     },
-    "DataSourceName": "MusicTableDataSource",
+    "DataSourceName": "ListDataSource",
     "FieldName": "listMusic",
     "Kind": "UNIT",
-    "RequestMappingTemplate": "{\"version\" : \"2017-02-28\", \"operation\" : \"Scan\", \"consistentRead\": false}",
-    "ResponseMappingTemplate": "$util.toJson($ctx.result.items)",
     "TypeName": "Query"
    },
    "DependsOn": [
-    "AudioByteGraphQLMusicTableDataSource53C1A212",
+    "AudioByteGraphQLListDataSourceCDF21185",
     "AudioByteGraphQLSchema9ED22681"
    ],
    "Metadata": {
@@ -873,7 +966,7 @@
   "CDKMetadata": {
    "Type": "AWS::CDK::Metadata",
    "Properties": {
-    "Analytics": "v2:deflate64:H4sIAAAAAAAA/+1WTW/bMAz9LdWxUL21wTAgN+djbdFuzZLsMBhBwVhMolaWPElO5wn+74NkO3X6tcsKdMAOiSU+6pF6lEyfRCfHH6L3B3BnjlJ2eyT4MnIzC+kthTtz7UwvcoMivUWbOAKFVSMUaPFqeYOpNaRvdYGULIPHF8iQ9MkhoSRV2pC+XyKEukP2Ge1GMW8ik29zQsnp2P+fjeMRWdDW60rzNZem4WiMZwgMdW2sFpRozNQWxEQJnpakTxgaq1VJKuoIMDZU2kwLga8RnQbkkCyqBR2uZK0LrR91PolrtGjT3bnVeOM8AIPJoqKslJAptozcHJYCE0dy0JZbruQFlqTviLzX1Ja5H858Hs+JQIn1RLtK1BkE8ooKyJYMIvepkKkPkTiCcsu1khlK20RZNeBeMVk73IBkAnUz04W0vI1Uyz/uEiY7vf4Evok8glatOBXlkEVuqkJZwJgiQzYINck1lynPQcRpqopdxrWPXxAHhvbMZCBhjSzUimN9Lbq2MtaNb5vfXE3aEG2FE9eg1kK6OZeCS9xhu629CL7M+3+Dz23wVXN+e1mFW+Cj0eaV5pNoF8yVRx7xPDYzNrNg0V8x00npKfM/w/+3iILCtbgVNb1rMAatiWL/oEKtTeQu1fpUqyJPHBHN8P6dTp8yBtJ2WUUhz00p08idasg3P0Sc82Svm0BhN0rzX+CP1FDJFV/7M8hwBYWwcRf19j33ed2J4sn59cX4uz+LxKQbzKDh/qmhHEvfdFj9hdAqEZxGmKNkKB9e3tdAgypBgq+Xcc47s3qFN8Q5v8CSjkIvHi1HYGGmCp2iBzuzy9A+O4YpGiW2qMOFacZVRYeFsSrzBu8V8mg9atY9fKLVljPU/pOAhiMws7Dmck27DPTBLzBeFTYvbEUnpd0o+a4XHfeijwc3hvOjpiNG0/r5G0FDRurmCQAA"
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/+1WXW/bIBT9LeWxot7aaJqUN+djbdVuzZLsYbKi6sbcJLQYPMDpPOT/PoHt1Fk/tpdKndSHBLjncu7hXjCcRCfHH6L3B3BnjlJ2eyT4MnIzC+kthTtz7UwvcoMivUWbOAKFVSMUaPFqeYOpNaRvdYGULIPHF8iQ9MkhoSRV2pC+nyKEukP2Ge1GMW8ik29zQsnp2P+fjeMRWdDW60rzNZem4WiMZwgMdW2sFpRozNQWxEQJnpakTxgaq1VJKuoIMDZU2kwLgS8RnQbkkCyqBR2uZJ0XWje1nsQ1uWjl7txqvHEegMFkUVFWSsgUW0ZuDkuBiSM5aMstV/ICS9J3RN7n1Ja57868jqeSQIn1RLtK1AoCeUUFZEsGkftUyNSHSBxBueVayQylbaKsGnCvmKztbkAygboZ6UJa3kaq0z/uEia7fP0NfBU6Qq7a5FSUQxa5qQplAWOKDNkg1CTXXKY8BxGnqSp2imsfPyEODO2eyUDCGlmoFcf6WHRtZawb31bfXE3aEG2FE9eg1kK6OZeCS9xhu6U9Cz7P+7bApxb4oprfVP2bqnA2fTTafGi9iHbCXHnkAc9DM2MzCxb9wTcdSY+Z/xv+V0cUSlVXqaKmdw3GoDVR7Bsq1NpE7lKtT7Uq8sQR0XTvryz6mDGQttMqCnluSplG7lRDvvkh4pwne5clFHajNP8Ffm8OlVzxtd/MDFdQCBt3UW/fc5/XF208Ob++GH/3m5qYdIMZNNw/NZRj6e9UVj+A2kwEpxHmKBnKP79NL4GGrIQUfL2Mc94Z1TO8Ic75BZZ0FJ4ao+UILMxUoVP0YGd0GV4HHcMUjRJb1OHkNf2qosPCWJV5g/cKOlqPmnUPn2i15Qy1f/HQsAVmFtZcrmmXgT7yC6xXhc0LW9FJaTdKvutFx73o48GN4fyoufSjad3+BttTz93JCgAA"
    },
    "Metadata": {
     "aws:cdk:path": "InfrastructureStack/CDKMetadata/Default"

@@ -5,23 +5,26 @@ import Upload from './pages/Upload';
 import Profile from './pages/Profile';
 import Navbar from './components/Navbar';
 import Player from './components/Player';
+import { MusicPlayerProvider } from './context/MusicPlayerContext';
 
 function App() {
   return (
-    <Router>
-      <div className="min-h-screen bg-gray-900 text-white">
-        <Navbar />
-        <main className="pb-24">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/library" element={<Library />} />
-            <Route path="/upload" element={<Upload />} />
-            <Route path="/profile" element={<Profile />} />
-          </Routes>
-        </main>
-        <Player />
-      </div>
-    </Router>
+    <MusicPlayerProvider>
+      <Router>
+        <div className="min-h-screen bg-gray-900 text-white">
+          <Navbar />
+          <main className="pb-24">
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/library" element={<Library />} />
+              <Route path="/upload" element={<Upload />} />
+              <Route path="/profile" element={<Profile />} />
+            </Routes>
+          </main>
+          <Player />
+        </div>
+      </Router>
+    </MusicPlayerProvider>
   );
 }
 
