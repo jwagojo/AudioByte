@@ -1,0 +1,35 @@
+type Music {
+  music_id: ID!
+  title: String!
+  artist: String
+  album: String
+  duration: Int
+  file_url: String!
+  uploaded_at: AWSDateTime!
+}
+
+type Query {
+  listMusic: [Music]
+  getMusic(music_id: ID!): Music
+}
+
+type Mutation {
+  createMusic(
+    title: String!
+    artist: String
+    album: String
+    duration: Int
+  ): MusicUploadResponse
+  deleteMusic(music_id: ID!): Music
+}
+
+type MusicUploadResponse {
+  music_id: ID!
+  upload_url: String!
+  message: String!
+}
+
+schema {
+  query: Query
+  mutation: Mutation
+}
