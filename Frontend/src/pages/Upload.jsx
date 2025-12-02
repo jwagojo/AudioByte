@@ -19,7 +19,6 @@ function Upload() {
       setAudioFile(file);
       setMessage({ type: '', text: '' });
       
-      // Auto-fill title from filename if empty
       if (!title) {
         const filename = file.name.replace(/\.[^/.]+$/, '');
         setTitle(filename);
@@ -65,7 +64,7 @@ function Upload() {
     setMessage({ type: '', text: '' });
 
     try {
-      // Get audio duration
+
       const audio = new Audio();
       const duration = await new Promise((resolve) => {
         audio.addEventListener('loadedmetadata', () => {
@@ -74,7 +73,6 @@ function Upload() {
         audio.src = URL.createObjectURL(audioFile);
       });
 
-      // Step 1: Create music entry and get presigned URL
       setUploadProgress(10);
       const data = await graphqlRequest(createMusicMutation, {
         title: title.trim(),
@@ -86,7 +84,6 @@ function Upload() {
       const { upload_url, music_id, message: successMessage } = data.createMusic;
       setUploadProgress(30);
 
-      // Step 2: Upload file to S3 using presigned URL
       const uploadResponse = await fetch(upload_url, {
         method: 'PUT',
         headers: {
@@ -105,7 +102,6 @@ function Upload() {
         text: `Track "${title}" uploaded successfully!` 
       });
 
-      // Reset form
       setTimeout(() => {
         setAudioFile(null);
         setTitle('');

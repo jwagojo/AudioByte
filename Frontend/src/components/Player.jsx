@@ -54,7 +54,6 @@ function Player() {
     <div className="fixed bottom-0 left-0 right-0 bg-gray-950 border-t border-gray-800 px-4 py-3">
       <div className="max-w-7xl mx-auto">
         <div className="flex items-center justify-between gap-4">
-          {/* Track Info */}
           <div className="flex items-center gap-3 w-1/4">
             <div className="w-14 h-14 bg-gradient-to-br from-orange-500 to-pink-500 rounded flex items-center justify-center">
               <Music size={24} />
@@ -67,8 +66,6 @@ function Player() {
               <Heart size={20} />
             </button>
           </div>
-
-          {/* Controls */}
           <div className="flex flex-col items-center gap-2 w-1/2">
             <div className="flex items-center gap-4">
               <button 
@@ -91,7 +88,6 @@ function Player() {
               </button>
             </div>
             
-            {/* Progress Bar */}
             <div className="w-full flex items-center gap-2">
               <span className="text-xs text-gray-400">{formatTime(currentTime)}</span>
               <div 
@@ -107,7 +103,6 @@ function Player() {
             </div>
           </div>
 
-          {/* Volume */}
           <div className="flex items-center gap-2 w-1/4 justify-end">
             <button onClick={() => setVolume(volume > 0 ? 0 : 0.7)}>
               {volume === 0 ? <VolumeX size={20} /> : <Volume2 size={20} />}

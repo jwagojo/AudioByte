@@ -24,7 +24,7 @@ def handler(event, context):
             item['stream_url'] = s3.generate_presigned_url(
                 'get_object',
                 Params={'Bucket': BUCKET_NAME, 'Key': item['s3_key']},
-                ExpiresIn=3600  # 1 hour
+                ExpiresIn=3600
             )
 
     return items
