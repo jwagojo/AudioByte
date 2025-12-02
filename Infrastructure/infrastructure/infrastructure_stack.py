@@ -94,11 +94,14 @@ class InfrastructureStack(Stack):
             upload_fn
         )
 
-        music_data_source.create_resolver("ListMusicResolver",
+        list_data_source = graphql_api.add_lambda_data_source(
+            "ListDataSource",
+            list_fn
+        )
+
+        list_data_source.create_resolver("ListMusicResolver",
             type_name="Query",
-            field_name="listMusic",
-            request_mapping_template=appsync.MappingTemplate.dynamo_db_scan_table(),
-            response_mapping_template=appsync.MappingTemplate.dynamo_db_result_list()
+            field_name="listMusic"
         )
 
         music_data_source.create_resolver("GetMusicResolver",

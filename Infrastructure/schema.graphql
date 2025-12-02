@@ -5,6 +5,7 @@ type Music {
   album: String
   duration: Int
   file_url: String!
+  stream_url: String
   uploaded_at: AWSDateTime!
 }
 

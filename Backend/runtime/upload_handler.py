@@ -42,7 +42,7 @@ def handler(event, context):
         ExpiresIn=600
     )
 
-    timestamp = datetime.datetime.utcnow().isoformat()
+    timestamp = datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S.%fZ')
     file_url = f"https://{BUCKET_NAME}.s3.amazonaws.com/{key}"
     
     table.put_item(Item={

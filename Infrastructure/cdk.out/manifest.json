@@ -18,7 +18,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-${AWS::Region}",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/64e3156886af9cf87ff66d73c90fdb13f792d38e226843e7dbf354566b6a06ca.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/4528debf31faa9c65aa1e91010c552ff2d2364d87d3e595ed402f95248f5503f.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -703,6 +703,95 @@
           {
             "type": "aws:cdk:logicalId",
             "data": "AudioByteGraphQLUploadDataSource1C43E6B6"
+          }
+        ],
+        "/InfrastructureStack/AudioByteGraphQL/ListDataSource/ServiceRole": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": {
+              "assumedBy": {
+                "principalAccount": "*",
+                "assumeRoleAction": "*"
+              }
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addToPrincipalPolicy": [
+                {}
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "attachInlinePolicy": [
+                "*"
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "attachInlinePolicy": [
+                "*"
+              ]
+            }
+          }
+        ],
+        "/InfrastructureStack/AudioByteGraphQL/ListDataSource/ServiceRole/ImportServiceRole": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": "*"
+          }
+        ],
+        "/InfrastructureStack/AudioByteGraphQL/ListDataSource/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AudioByteGraphQLListDataSourceServiceRole8133182F"
+          }
+        ],
+        "/InfrastructureStack/AudioByteGraphQL/ListDataSource/ServiceRole/DefaultPolicy": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": "*"
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "attachToRole": [
+                "*"
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "attachToRole": [
+                "*"
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addStatements": [
+                {}
+              ]
+            }
+          }
+        ],
+        "/InfrastructureStack/AudioByteGraphQL/ListDataSource/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AudioByteGraphQLListDataSourceServiceRoleDefaultPolicy6849BA19"
+          }
+        ],
+        "/InfrastructureStack/AudioByteGraphQL/ListDataSource/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AudioByteGraphQLListDataSourceCDF21185"
           }
         ],
         "/InfrastructureStack/AudioByteGraphQL/ListMusicResolver/Resource": [

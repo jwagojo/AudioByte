@@ -3,8 +3,22 @@ import { Link } from 'react-router-dom';
 
 function Home() {
   return (
-    <div className="flex items-center justify-center min-h-[calc(100vh-8rem)]">
-      <div className="max-w-4xl mx-auto px-4 text-center">
+    <div className="relative flex items-center justify-center min-h-[calc(100vh-8rem)] overflow-hidden">
+      <div className="absolute inset-0 w-full h-full">
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover opacity-30"
+        >
+          <source src="/src/assets/vid/audiowave.mp4" type="video/mp4" />
+          {/*source of video: https://youtu.be/puPYeUO4BAM?si=-Qg9FT6rklVv9cfQ */}
+        </video>
+        <div className="absolute inset-0 bg-gradient-to-b from-gray-900/50 via-gray-900/70 to-gray-900"></div>
+      </div>
+
+      <div className="relative z-10 max-w-4xl mx-auto px-4 text-center">
         <h1 className="font-ghrathe text-6xl md:text-8xl font-bold text-orange-500 mb-6">
           AudioByte.
         </h1>
