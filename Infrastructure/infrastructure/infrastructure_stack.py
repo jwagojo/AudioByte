@@ -28,7 +28,7 @@ class InfrastructureStack(Stack):
             removal_policy=RemovalPolicy.DESTROY,
             auto_delete_objects=True,
             cors=[s3.CorsRule(
-                allowed_methods=[s3.HttpMethods.PUT, s3.HttpMethods.GET, s3.HttpMethods.HEAD],
+                allowed_methods=[s3.HttpMethods.PUT, s3.HttpMethods.GET, s3.HttpMethods.HEAD, s3.HttpMethods.DELETE],
                 allowed_origins=["*"],
                 allowed_headers=["*"]
             )]
@@ -67,10 +67,23 @@ class InfrastructureStack(Stack):
             }
         )
 
+        delete_fn = _lambda.Function(self, "DeleteFunction",
+            function_name="audiobyte-delete-6203",
+            runtime=_lambda.Runtime.PYTHON_3_9,
+            handler="delete_handler.handler",
+            code=_lambda.Code.from_asset(code_path),
+            environment={
+                "BUCKET_NAME": music_bucket.bucket_name,
+                "TABLE_NAME": music_table.table_name
+            }
+        )
+
         music_bucket.grant_put(upload_fn)
         music_bucket.grant_read(list_fn)
+        music_bucket.grant_delete(delete_fn)
         music_table.grant_read_write_data(upload_fn)
         music_table.grant_read_data(list_fn)
+        music_table.grant_read_write_data(delete_fn)
 
         # GraphQL API with AppSync
         graphql_api = appsync.GraphqlApi(self, "AudioByteGraphQL",
@@ -99,6 +112,11 @@ class InfrastructureStack(Stack):
             list_fn
         )
 
+        delete_data_source = graphql_api.add_lambda_data_source(
+            "DeleteDataSource",
+            delete_fn
+        )
+
         list_data_source.create_resolver("ListMusicResolver",
             type_name="Query",
             field_name="listMusic"
@@ -116,11 +134,9 @@ class InfrastructureStack(Stack):
             field_name="createMusic"
         )
 
-        music_data_source.create_resolver("DeleteMusicResolver",
+        delete_data_source.create_resolver("DeleteMusicResolver",
             type_name="Mutation",
-            field_name="deleteMusic",
-            request_mapping_template=appsync.MappingTemplate.dynamo_db_delete_item("music_id", "music_id"),
-            response_mapping_template=appsync.MappingTemplate.dynamo_db_result_item()
+            field_name="deleteMusic"
         )
 
         CfnOutput(self, "GraphQLApiUrl",
@@ -131,4 +147,19 @@ class InfrastructureStack(Stack):
         CfnOutput(self, "GraphQLApiKey",
             value=graphql_api.api_key or "No API Key",
             description="GraphQL API Key"
+        )
+
+        CfnOutput(self, "UploadFunctionArn",
+            value=upload_fn.function_arn,
+            description="Upload Lambda Function ARN"
+        )
+
+        CfnOutput(self, "ListFunctionArn",
+            value=list_fn.function_arn,
+            description="List Lambda Function ARN"
+        )
+
+        CfnOutput(self, "DeleteFunctionArn",
+            value=delete_fn.function_arn,
+            description="Delete Lambda Function ARN"
         )
