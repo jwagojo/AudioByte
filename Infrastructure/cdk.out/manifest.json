@@ -18,7 +18,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-${AWS::Region}",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/4528debf31faa9c65aa1e91010c552ff2d2364d87d3e595ed402f95248f5503f.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/e071871ec3891071b52cbbce502dc21a2c947c868240b5d33f4ea7ba371e8c3c.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -45,7 +45,8 @@
                   "allowedMethods": [
                     "PUT",
                     "GET",
-                    "HEAD"
+                    "HEAD",
+                    "DELETE"
                   ],
                   "allowedOrigins": "*",
                   "allowedHeaders": "*"
@@ -62,7 +63,8 @@
                   "allowedMethods": [
                     "PUT",
                     "GET",
-                    "HEAD"
+                    "HEAD",
+                    "DELETE"
                   ],
                   "allowedOrigins": "*",
                   "allowedHeaders": "*"
@@ -462,6 +464,160 @@
             "data": "ListFunctionLogGroup0A803594"
           }
         ],
+        "/InfrastructureStack/DeleteFunction": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": {
+              "environment": "*",
+              "functionName": "*",
+              "code": "*",
+              "handler": "*",
+              "runtime": "*"
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addEnvironment": [
+                "*",
+                "*"
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addEnvironment": [
+                "*",
+                "*"
+              ]
+            }
+          }
+        ],
+        "/InfrastructureStack/DeleteFunction/ServiceRole": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": {
+              "assumedBy": {
+                "principalAccount": "*",
+                "assumeRoleAction": "*"
+              },
+              "managedPolicies": [
+                {
+                  "managedPolicyArn": "*"
+                }
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addToPrincipalPolicy": [
+                {}
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "attachInlinePolicy": [
+                "*"
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "attachInlinePolicy": [
+                "*"
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addToPrincipalPolicy": [
+                {}
+              ]
+            }
+          }
+        ],
+        "/InfrastructureStack/DeleteFunction/ServiceRole/ImportServiceRole": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": "*"
+          }
+        ],
+        "/InfrastructureStack/DeleteFunction/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DeleteFunctionServiceRole092E9E58"
+          }
+        ],
+        "/InfrastructureStack/DeleteFunction/ServiceRole/DefaultPolicy": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": "*"
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "attachToRole": [
+                "*"
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "attachToRole": [
+                "*"
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addStatements": [
+                {}
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addStatements": [
+                {}
+              ]
+            }
+          }
+        ],
+        "/InfrastructureStack/DeleteFunction/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DeleteFunctionServiceRoleDefaultPolicy702B92CD"
+          }
+        ],
+        "/InfrastructureStack/DeleteFunction/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DeleteFunction9052F8B5"
+          }
+        ],
+        "/InfrastructureStack/DeleteFunction/LogGroup": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": {
+              "logGroupName": "*"
+            }
+          }
+        ],
+        "/InfrastructureStack/DeleteFunction/LogGroup/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DeleteFunctionLogGroup004FF2B5"
+          }
+        ],
         "/InfrastructureStack/AudioByteGraphQL": [
           {
             "type": "aws:cdk:analytics:construct",
@@ -794,6 +950,95 @@
             "data": "AudioByteGraphQLListDataSourceCDF21185"
           }
         ],
+        "/InfrastructureStack/AudioByteGraphQL/DeleteDataSource/ServiceRole": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": {
+              "assumedBy": {
+                "principalAccount": "*",
+                "assumeRoleAction": "*"
+              }
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addToPrincipalPolicy": [
+                {}
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "attachInlinePolicy": [
+                "*"
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "attachInlinePolicy": [
+                "*"
+              ]
+            }
+          }
+        ],
+        "/InfrastructureStack/AudioByteGraphQL/DeleteDataSource/ServiceRole/ImportServiceRole": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": "*"
+          }
+        ],
+        "/InfrastructureStack/AudioByteGraphQL/DeleteDataSource/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AudioByteGraphQLDeleteDataSourceServiceRole562BCC28"
+          }
+        ],
+        "/InfrastructureStack/AudioByteGraphQL/DeleteDataSource/ServiceRole/DefaultPolicy": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": "*"
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "attachToRole": [
+                "*"
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "attachToRole": [
+                "*"
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addStatements": [
+                {}
+              ]
+            }
+          }
+        ],
+        "/InfrastructureStack/AudioByteGraphQL/DeleteDataSource/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AudioByteGraphQLDeleteDataSourceServiceRoleDefaultPolicyAF521897"
+          }
+        ],
+        "/InfrastructureStack/AudioByteGraphQL/DeleteDataSource/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AudioByteGraphQLDeleteDataSourceA4319CF7"
+          }
+        ],
         "/InfrastructureStack/AudioByteGraphQL/ListMusicResolver/Resource": [
           {
             "type": "aws:cdk:logicalId",
@@ -828,6 +1073,24 @@
           {
             "type": "aws:cdk:logicalId",
             "data": "GraphQLApiKey"
+          }
+        ],
+        "/InfrastructureStack/UploadFunctionArn": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "UploadFunctionArn"
+          }
+        ],
+        "/InfrastructureStack/ListFunctionArn": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ListFunctionArn"
+          }
+        ],
+        "/InfrastructureStack/DeleteFunctionArn": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DeleteFunctionArn"
           }
         ],
         "/InfrastructureStack/CDKMetadata/Default": [
