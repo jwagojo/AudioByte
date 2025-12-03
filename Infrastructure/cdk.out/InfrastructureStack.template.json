@@ -723,7 +723,7 @@
       "ApiId"
      ]
     },
-    "Definition": "type Music {\n  music_id: ID!\n  title: String!\n  artist: String\n  album: String\n  duration: Int\n  file_url: String!\n  stream_url: String\n  uploaded_at: AWSDateTime!\n}\n\ntype Query {\n  listMusic: [Music]\n  getMusic(music_id: ID!): Music\n}\n\ntype Mutation {\n  createMusic(\n    title: String!\n    artist: String\n    album: String\n    duration: Int\n  ): MusicUploadResponse\n  deleteMusic(music_id: ID!): Music\n}\n\ntype MusicUploadResponse {\n  music_id: ID!\n  upload_url: String!\n  message: String!\n}\n\nschema {\n  query: Query\n  mutation: Mutation\n}\n"
+    "Definition": "type Music {\r\n  music_id: ID!\r\n  title: String!\r\n  artist: String\r\n  album: String\r\n  duration: Int\r\n  file_url: String!\r\n  stream_url: String\r\n  uploaded_at: AWSDateTime!\r\n}\r\n\r\ntype Query {\r\n  listMusic: [Music]\r\n  getMusic(music_id: ID!): Music\r\n}\r\n\r\ntype Mutation {\r\n  createMusic(\r\n    title: String!\r\n    artist: String\r\n    album: String\r\n    duration: Int\r\n  ): MusicUploadResponse\r\n  deleteMusic(music_id: ID!): Music\r\n}\r\n\r\ntype MusicUploadResponse {\r\n  music_id: ID!\r\n  upload_url: String!\r\n  message: String!\r\n}\r\n\r\nschema {\r\n  query: Query\r\n  mutation: Mutation\r\n}\r\n"
    },
    "Metadata": {
     "aws:cdk:path": "InfrastructureStack/AudioByteGraphQL/Schema"
@@ -1221,7 +1221,7 @@
   "CDKMetadata": {
    "Type": "AWS::CDK::Metadata",
    "Properties": {
-    "Analytics": "v2:deflate64:H4sIAAAAAAAA/+1WwXLbIBD9lnLMELWJpxffFFtNMnEbN3YPHY0nsxZrmwSBCsipyujfOyDJkZs27SWHtj7YwL7l8VgWtKfR6cnb6M0reDDHGbs/FnwZuZmF7J7Cg7l1ZhC5szK7R5s6AqVVYxRo8Xp5h5k1ZGh1iZQsg8cHyJEMyRGhJFPakKGfIoR6QPYe7UYxbyLTT3NCyXni/y+SeEwoGSeTZJ6QBe3crzVfc2lastZ4gcBQN8Z6QYnGXG1BTJXgWUWGhKGxWlWkpo4AYyOlzU0p8EVl0IAckUW9oKOVbCJFm6YRlro2Op3unVuDt85nYDBd1JRVEnLFlpGbw1Jg6kgB2nLLlbzCigwdkY9RtlXhuzOv41fRoMR6ot3ZNAoCeU0F5EsGkXtXyswvkTqCcsu1kjlK266yasG942VddwOSCdTtSJfS8m6l5hySPmG6i9fvwIOOHhjOrDukmnLII3ejQnqAMWWO7CzkRqG5zHgBIs4yVe4UNz5+QhwYutzNQcIaWcgZjs2F7duqWLe+nb65mnZLdJmWuha1FrLNpRRc4g7bbe1Z8Hnewwb/2w2+qOaDqr9ZVXgS/Wq0/c56Ed2EufLIE56nZsZmFiz699b0JP3MfOD/54lCTjXpVFMzuAVj0Joo9g0Vam0iN1Hrc63KInVEtN3H0or+sTGs1HHVFIrCVDKL3LmGYvNFxAVP9yo9KO1Gaf4N/M0aKbnia38VGa6gFDbuo96+5z5vqsR4enl7lXz2V5KYbIM5tNxfNVSJ9AUha+r5LjzBaYwFSobyx/f+JdAQlRCCj5O44L1RM8Mb4oJfYUXHoU4eL8dgYaZKnaEHe6NJKG17hhs0SmxRh3ej7dc1HZXGqtwbvFfQ0Xk0rHv4VKstZ6h9uU5DXswsrLlc0z4DfeYX2K9LW5S2ptPKbpR8PYhOTqPBqzvD+XFbMUY3TfsdErPwKKANAAA="
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/+1WUW/TMBD+LfPj5AW2CiH1LWvLNq2w0pYHFFXTNb623hw72E5HsPLfkZ2kSxkMXvYA9KG1fd/58+fz2bmz6Oz0TfT6CB7MScruTwRfRm5mIb2n8GBunelF7rxI79EmjkBh1RAFWrxZ3mFqDelbXSAly+DxATIkfXJMKEmVNqTvpwihHpC9R7tRzJvI5NOcUHIx8v+Xo3hIKBmOxqP5iCxo636j+ZpL05A1xksEhro2VgtKNGZqC2KiBE9L0icMjdWqJBV1BBgbKG2mhcAXlUEDckwW1YIOVrKOFK2bWljimui0unduNd44n4PBZFFRVkrIFFtGbg5LgYkjOWjLLVfyGkvSd0Q+RtmWue/OvI5fRYMS64l2Z1MrCOQVFZAtGUTuXSFTv0TiCMot10pmKG2zyqoB946Xtd0NSCZQNyNdSMvblepzGHUJk128fgcedHTAcGbtIVWUQxa5qQrpAcYUGbLzkBu55jLlOYg4TVWxU1z7+AlxYGhzNwMJa2QhZzjWF7ZrK2Pd+Lb65mrSLtFmWuIa1FpIN1dScIk7bLe1Z8HneQ8b/G83+KKaD6r+ZlXhSfSr0eY760W0E+bKI094npoZm1mw6N9b05H0M/OB/58nCjlVp1NFTe8WjEFrotg3VKi1idxYrS+0KvLEEdF0H0sr+sfGsFLLVVHIc1PKNHIXGvLNFxHnPNmr9KCwG6X5N/A3a6Dkiq/9VWS4gkLYuIt6+577vK4S48nV7fXos7+SxKQbzKDh/qqhHElfELK6nm/DE5yGmKNkKH98718CDVEJIfg4jnPeGdUzvCHO+TWWdBjq5OFyCBZmqtAperAzGofStmOYolFiizq8G02/quigMFZl3uC9go7Wo2bdwydabTlD7ct1GvJiZmHN5Zp2Gegzv8B+U9i8sBWdlHaj5KtedNqL3h7dGc5PmooxmtbtdzVFdPWgDQAA"
    },
    "Metadata": {
     "aws:cdk:path": "InfrastructureStack/CDKMetadata/Default"
