@@ -6,6 +6,7 @@ from aws_cdk import (
     aws_dynamodb as dynamodb,
     aws_lambda as _lambda,
     aws_appsync as appsync,
+    aws_cognito as cognito
 )
 from constructs import Construct
 import os
@@ -22,6 +23,16 @@ class InfrastructureStack(Stack):
         #     self, "InfrastructureQueue",
         #     visibility_timeout=Duration.seconds(300),
         # )
+        user_pool = cognito.UserPool(self, "AudioByteUserPool",
+            user_pool_name="AudioByteUserPool-6203",
+            self_sign_up_enabled=True,
+            sign_in_aliases=cognito.SignInAliases(email=True),
+            removal_policy=RemovalPolicy.DESTROY
+        )
+
+        user_pool_client = user_pool.add_client("AudioByteAppClient",
+            user_pool_client_name="AudioByteWebClient"
+        )
 
         music_bucket = s3.Bucket(self, "AudioByteMusic",
             bucket_name="audiobyte-music-6203",
@@ -86,12 +97,18 @@ class InfrastructureStack(Stack):
         music_table.grant_read_write_data(delete_fn)
 
         # GraphQL API with AppSync
+
+
+        # GraphQL API with AppSync
         graphql_api = appsync.GraphqlApi(self, "AudioByteGraphQL",
             name="audiobyte-graphql-6203",
             schema=appsync.SchemaFile.from_asset(os.path.join(os.path.dirname(__file__), "..", "schema.graphql")),
             authorization_config=appsync.AuthorizationConfig(
                 default_authorization=appsync.AuthorizationMode(
-                    authorization_type=appsync.AuthorizationType.API_KEY
+                    authorization_type=appsync.AuthorizationType.USER_POOL, 
+                    user_pool_config=appsync.UserPoolConfig(              
+                        user_pool=user_pool                                 
+                    )                                                       
                 )
             ),
             xray_enabled=True
@@ -162,4 +179,14 @@ class InfrastructureStack(Stack):
         CfnOutput(self, "DeleteFunctionArn",
             value=delete_fn.function_arn,
             description="Delete Lambda Function ARN"
+        )
+
+        CfnOutput(self, "UserPoolId",
+            value=user_pool.user_pool_id,
+            description="Cognito User Pool ID"
+        )
+
+        CfnOutput(self, "UserPoolClientId",
+            value=user_pool_client.user_pool_client_id,
+            description="Cognito User Pool Client ID"
         )

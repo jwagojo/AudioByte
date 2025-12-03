@@ -1,12 +1,32 @@
-const GRAPHQL_ENDPOINT = import.meta.env.VITE_GRAPHQL_ENDPOINT
-const API_KEY = import.meta.env.VITE_GRAPHQL_API_KEY
+// Frontend/src/utils/graphql.js
+
+import { fetchAuthSession } from 'aws-amplify/auth';
+import awsExports from '../config/aws-exports';
+
+// Use exports from the new config file
+const GRAPHQL_ENDPOINT = awsExports.aws_appsync_graphqlEndpoint;
+// We no longer rely on VITE_GRAPHQL_API_KEY for authorized requests
 
 export const graphqlRequest = async (query, variables = {}) => {
+  // Get the JWT token from the currently authenticated user
+  let token;
+  try {
+    const session = await fetchAuthSession();
+    token = session.tokens?.idToken?.toString();
+    if (!token) {
+      throw new Error("No authentication token found");
+    }
+  } catch (e) {
+    // If no user is logged in, you can handle this (e.g., throw or use API Key if configured for unauth access)
+    // For now, we throw since most operations require a logged-in user
+    throw new Error("Authentication required for this operation.");
+  }
+
   const response = await fetch(GRAPHQL_ENDPOINT, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'x-api-key': API_KEY,
+      'Authorization': token, // <-- USE JWT FOR AUTHORIZATION
     },
     body: JSON.stringify({
       query,

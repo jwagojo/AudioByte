@@ -1,5 +1,76 @@
 {
  "Resources": {
+  "AudioByteUserPool7C3BD1A5": {
+   "Type": "AWS::Cognito::UserPool",
+   "Properties": {
+    "AccountRecoverySetting": {
+     "RecoveryMechanisms": [
+      {
+       "Name": "verified_phone_number",
+       "Priority": 1
+      },
+      {
+       "Name": "verified_email",
+       "Priority": 2
+      }
+     ]
+    },
+    "AdminCreateUserConfig": {
+     "AllowAdminCreateUserOnly": false
+    },
+    "AutoVerifiedAttributes": [
+     "email"
+    ],
+    "EmailVerificationMessage": "The verification code to your new account is {####}",
+    "EmailVerificationSubject": "Verify your new account",
+    "SmsVerificationMessage": "The verification code to your new account is {####}",
+    "UserPoolName": "AudioByteUserPool-6203",
+    "UsernameAttributes": [
+     "email"
+    ],
+    "VerificationMessageTemplate": {
+     "DefaultEmailOption": "CONFIRM_WITH_CODE",
+     "EmailMessage": "The verification code to your new account is {####}",
+     "EmailSubject": "Verify your new account",
+     "SmsMessage": "The verification code to your new account is {####}"
+    }
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "InfrastructureStack/AudioByteUserPool/Resource"
+   }
+  },
+  "AudioByteUserPoolAudioByteAppClient07B7F39E": {
+   "Type": "AWS::Cognito::UserPoolClient",
+   "Properties": {
+    "AllowedOAuthFlows": [
+     "implicit",
+     "code"
+    ],
+    "AllowedOAuthFlowsUserPoolClient": true,
+    "AllowedOAuthScopes": [
+     "profile",
+     "phone",
+     "email",
+     "openid",
+     "aws.cognito.signin.user.admin"
+    ],
+    "CallbackURLs": [
+     "https://example.com"
+    ],
+    "ClientName": "AudioByteWebClient",
+    "SupportedIdentityProviders": [
+     "COGNITO"
+    ],
+    "UserPoolId": {
+     "Ref": "AudioByteUserPool7C3BD1A5"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "InfrastructureStack/AudioByteUserPool/AudioByteAppClient/Resource"
+   }
+  },
   "AudioByteMusic9C0BFD0D": {
    "Type": "AWS::S3::Bucket",
    "Properties": {
@@ -706,8 +777,17 @@
   "AudioByteGraphQLAA2EE0CC": {
    "Type": "AWS::AppSync::GraphQLApi",
    "Properties": {
-    "AuthenticationType": "API_KEY",
+    "AuthenticationType": "AMAZON_COGNITO_USER_POOLS",
     "Name": "audiobyte-graphql-6203",
+    "UserPoolConfig": {
+     "AwsRegion": {
+      "Ref": "AWS::Region"
+     },
+     "DefaultAction": "ALLOW",
+     "UserPoolId": {
+      "Ref": "AudioByteUserPool7C3BD1A5"
+     }
+    },
     "XrayEnabled": true
    },
    "Metadata": {
@@ -723,27 +803,10 @@
       "ApiId"
      ]
     },
-    "Definition": "type Music {\n  music_id: ID!\n  title: String!\n  artist: String\n  album: String\n  duration: Int\n  file_url: String!\n  stream_url: String\n  uploaded_at: AWSDateTime!\n}\n\ntype Query {\n  listMusic: [Music]\n  getMusic(music_id: ID!): Music\n}\n\ntype Mutation {\n  createMusic(\n    title: String!\n    artist: String\n    album: String\n    duration: Int\n  ): MusicUploadResponse\n  deleteMusic(music_id: ID!): Music\n}\n\ntype MusicUploadResponse {\n  music_id: ID!\n  upload_url: String!\n  message: String!\n}\n\nschema {\n  query: Query\n  mutation: Mutation\n}\n"
+    "Definition": "type Music {\r\n  music_id: ID!\r\n  title: String!\r\n  artist: String\r\n  album: String\r\n  duration: Int\r\n  file_url: String!\r\n  stream_url: String\r\n  uploaded_at: AWSDateTime!\r\n}\r\n\r\ntype Query {\r\n  listMusic: [Music]\r\n  getMusic(music_id: ID!): Music\r\n}\r\n\r\ntype Mutation {\r\n  createMusic(\r\n    title: String!\r\n    artist: String\r\n    album: String\r\n    duration: Int\r\n  ): MusicUploadResponse\r\n  deleteMusic(music_id: ID!): Music\r\n}\r\n\r\ntype MusicUploadResponse {\r\n  music_id: ID!\r\n  upload_url: String!\r\n  message: String!\r\n}\r\n\r\nschema {\r\n  query: Query\r\n  mutation: Mutation\r\n}\r\n"
    },
    "Metadata": {
     "aws:cdk:path": "InfrastructureStack/AudioByteGraphQL/Schema"
-   }
-  },
-  "AudioByteGraphQLDefaultApiKey9282B2CE": {
-   "Type": "AWS::AppSync::ApiKey",
-   "Properties": {
-    "ApiId": {
-     "Fn::GetAtt": [
-      "AudioByteGraphQLAA2EE0CC",
-      "ApiId"
-     ]
-    }
-   },
-   "DependsOn": [
-    "AudioByteGraphQLSchema9ED22681"
-   ],
-   "Metadata": {
-    "aws:cdk:path": "InfrastructureStack/AudioByteGraphQL/DefaultApiKey"
    }
   },
   "AudioByteGraphQLMusicTableDataSourceServiceRole5CFC0266": {
@@ -1221,7 +1284,7 @@
   "CDKMetadata": {
    "Type": "AWS::CDK::Metadata",
    "Properties": {
-    "Analytics": "v2:deflate64:H4sIAAAAAAAA/+1WwXLbIBD9lnLMELWJpxffFFtNMnEbN3YPHY0nsxZrmwSBCsipyujfOyDJkZs27SWHtj7YwL7l8VgWtKfR6cnb6M0reDDHGbs/FnwZuZmF7J7Cg7l1ZhC5szK7R5s6AqVVYxRo8Xp5h5k1ZGh1iZQsg8cHyJEMyRGhJFPakKGfIoR6QPYe7UYxbyLTT3NCyXni/y+SeEwoGSeTZJ6QBe3crzVfc2lastZ4gcBQN8Z6QYnGXG1BTJXgWUWGhKGxWlWkpo4AYyOlzU0p8EVl0IAckUW9oKOVbCJFm6YRlro2Op3unVuDt85nYDBd1JRVEnLFlpGbw1Jg6kgB2nLLlbzCigwdkY9RtlXhuzOv41fRoMR6ot3ZNAoCeU0F5EsGkXtXyswvkTqCcsu1kjlK266yasG942VddwOSCdTtSJfS8m6l5hySPmG6i9fvwIOOHhjOrDukmnLII3ejQnqAMWWO7CzkRqG5zHgBIs4yVe4UNz5+QhwYutzNQcIaWcgZjs2F7duqWLe+nb65mnZLdJmWuha1FrLNpRRc4g7bbe1Z8Hnewwb/2w2+qOaDqr9ZVXgS/Wq0/c56Ed2EufLIE56nZsZmFiz699b0JP3MfOD/54lCTjXpVFMzuAVj0Joo9g0Vam0iN1Hrc63KInVEtN3H0or+sTGs1HHVFIrCVDKL3LmGYvNFxAVP9yo9KO1Gaf4N/M0aKbnia38VGa6gFDbuo96+5z5vqsR4enl7lXz2V5KYbIM5tNxfNVSJ9AUha+r5LjzBaYwFSobyx/f+JdAQlRCCj5O44L1RM8Mb4oJfYUXHoU4eL8dgYaZKnaEHe6NJKG17hhs0SmxRh3ej7dc1HZXGqtwbvFfQ0Xk0rHv4VKstZ6h9uU5DXswsrLlc0z4DfeYX2K9LW5S2ptPKbpR8PYhOTqPBqzvD+XFbMUY3TfsdErPwKKANAAA="
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/+1XwVLbMBD9lurICLfAdDqTm0lSYJqWlISTJ8NsrI0jkCVXkkNdjf+9I9kODhTaC4e2OSSW9+2+fV6t7fVxdHz0Pnr3Bu7NYcruDgVfRm5mIb2jcG9uXKoyya2K3LVBPVVKJI5ozNUGxFQJnlZkQBgaq1VFKDEoVjOeyetiLGEpkJGB1SVSYngmL2QsOBg0ZOAI5sBFg9aUlC35F8iRDMgBqRd0uJJdTtothoKjtInbBgTnh/gGf4alAWtqTiJ3WqZ36ImgtGqEAi1eLm8xtaZTvAweWypKUqUNGfgQIdQ9ss9o14p5E5lezwklZ2P/fz6OR4SS0Xgyno/Jgnbul5pnXJqWrDWeIzDUphP7bGVr6ggwNlTaXJUCX1UGDcgBWTTVaypFm0MjLHFtdXpF7uOt8ykYTBY1ZZWEXLFl5Oa+JxJHCtCWW67kJ6x8M8iHKtuq8MuZ1/F8n1lP9GibA3lNBeRLBpH7WMrUp0gcQbnhWskcpW2zrFpwZ3tZt1yDZAJ1e6ZLaXmXqdmHcZ8w2dbrd+BeRw8Me9ZtUk055JG7UqE9wJgyR3YaeqPQXKa8ABGnqSq3ihsfHxAHhq53c5CQIQs9w7G5Yfu2Ktatb6dvrqZdiq7TEtei1kK6vpCCS9xi20t7EXyZd3+B/+0Fvqrmvaq/WVV4JPpstH3PehFdwFx55AnPUzNjMwsW/fPW9CT9yrzn/+eJQk817eQn3xswBq2JYn+gQmUmchOVnWlVFokjol0+jFb0j40hU8dVUygKU8k0cmcaivU3ERc82Zn0oLRrpfkP8HfWUMkVz/ytyHAFpbBxH/X2Hfd5MyXujP5bhp1vg7quKTHpGnNoA75rqHa+TrrSBacRFigZysfvgtdAQ8VCeb5O4oL3zpoIOgqT82g5AgszVeoUvU/vbBKG3Z7hCo0SG9ThSdKu65oOS2NV7g3eK2TvPBrWHXyq1YYz1H6Ap6FTZhYyLjPaZ6Av/AL7ZWmL0tZ0Wtm1km9PoqOT6MObW8P5YTtDRlfN8ScxPGWyhQ4AAA=="
    },
    "Metadata": {
     "aws:cdk:path": "InfrastructureStack/CDKMetadata/Default"
@@ -1241,12 +1304,7 @@
   },
   "GraphQLApiKey": {
    "Description": "GraphQL API Key",
-   "Value": {
-    "Fn::GetAtt": [
-     "AudioByteGraphQLDefaultApiKey9282B2CE",
-     "ApiKey"
-    ]
-   }
+   "Value": "No API Key"
   },
   "UploadFunctionArn": {
    "Description": "Upload Lambda Function ARN",
@@ -1273,6 +1331,18 @@
      "DeleteFunction9052F8B5",
      "Arn"
     ]
+   }
+  },
+  "UserPoolId": {
+   "Description": "Cognito User Pool ID",
+   "Value": {
+    "Ref": "AudioByteUserPool7C3BD1A5"
+   }
+  },
+  "UserPoolClientId": {
+   "Description": "Cognito User Pool Client ID",
+   "Value": {
+    "Ref": "AudioByteUserPoolAudioByteAppClient07B7F39E"
    }
   }
  },

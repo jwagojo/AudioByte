@@ -18,7 +18,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-${AWS::Region}",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/e071871ec3891071b52cbbce502dc21a2c947c868240b5d33f4ea7ba371e8c3c.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/d2bfcb386014b14ede97ce3723d11e09a3905a7e38fa8cd46cb238343449bb07.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -34,6 +34,40 @@
         "InfrastructureStack.assets"
       ],
       "metadata": {
+        "/InfrastructureStack/AudioByteUserPool": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": {
+              "removalPolicy": "destroy",
+              "selfSignUpEnabled": true,
+              "signInAliases": {
+                "email": true
+              },
+              "userPoolName": "*"
+            }
+          }
+        ],
+        "/InfrastructureStack/AudioByteUserPool/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AudioByteUserPool7C3BD1A5"
+          }
+        ],
+        "/InfrastructureStack/AudioByteUserPool/AudioByteAppClient": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": {
+              "userPool": "*",
+              "userPoolClientName": "*"
+            }
+          }
+        ],
+        "/InfrastructureStack/AudioByteUserPool/AudioByteAppClient/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AudioByteUserPoolAudioByteAppClient07B7F39E"
+          }
+        ],
         "/InfrastructureStack/AudioByteMusic": [
           {
             "type": "aws:cdk:analytics:construct",
@@ -625,7 +659,10 @@
               "name": "*",
               "authorizationConfig": {
                 "defaultAuthorization": {
-                  "authorizationType": "API_KEY"
+                  "authorizationType": "*",
+                  "userPoolConfig": {
+                    "userPool": "*"
+                  }
                 }
               },
               "schema": "*",
@@ -675,12 +712,6 @@
           {
             "type": "aws:cdk:logicalId",
             "data": "AudioByteGraphQLSchema9ED22681"
-          }
-        ],
-        "/InfrastructureStack/AudioByteGraphQL/DefaultApiKey": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "AudioByteGraphQLDefaultApiKey9282B2CE"
           }
         ],
         "/InfrastructureStack/AudioByteGraphQL/MusicTableDataSource/ServiceRole": [
@@ -1091,6 +1122,18 @@
           {
             "type": "aws:cdk:logicalId",
             "data": "DeleteFunctionArn"
+          }
+        ],
+        "/InfrastructureStack/UserPoolId": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "UserPoolId"
+          }
+        ],
+        "/InfrastructureStack/UserPoolClientId": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "UserPoolClientId"
           }
         ],
         "/InfrastructureStack/CDKMetadata/Default": [
