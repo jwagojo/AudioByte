@@ -7,11 +7,27 @@ type Music {
   file_url: String!
   stream_url: String
   uploaded_at: AWSDateTime!
+  user_id: String!
+  username: String
+}
+
+type User {
+  user_id: ID!
+  username: String!
+  email: String!
+  fullname: String
+  created_at: AWSDateTime!
+  total_tracks: Int
+  total_plays: Int
+  followers: Int
+  following: Int
 }
 
 type Query {
   listMusic: [Music]
   getMusic(music_id: ID!): Music
+  getCurrentUser: User
+  getUser(user_id: ID!): User
 }
 
 type Mutation {
@@ -22,6 +38,7 @@ type Mutation {
     duration: Int
   ): MusicUploadResponse
   deleteMusic(music_id: ID!): Music
+  updateUserProfile(fullname: String): User
 }
 
 type MusicUploadResponse {

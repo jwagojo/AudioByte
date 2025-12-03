@@ -1,13 +1,34 @@
+import { fetchAuthSession } from 'aws-amplify/auth';
+
 const GRAPHQL_ENDPOINT = import.meta.env.VITE_GRAPHQL_ENDPOINT
 const API_KEY = import.meta.env.VITE_GRAPHQL_API_KEY
 
-export const graphqlRequest = async (query, variables = {}) => {
+export const graphqlRequest = async (query, variables = {}, useAuth = true) => {
+  const headers = {
+    'Content-Type': 'application/json',
+  };
+
+  // Try to use Cognito authentication if available, otherwise fall back to API key
+  if (useAuth) {
+    try {
+      const session = await fetchAuthSession();
+      const token = session.tokens?.idToken?.toString();
+      if (token) {
+        headers['Authorization'] = token;
+      } else {
+        headers['x-api-key'] = API_KEY;
+      }
+    } catch (error) {
+      // If auth fails, use API key
+      headers['x-api-key'] = API_KEY;
+    }
+  } else {
+    headers['x-api-key'] = API_KEY;
+  }
+
   const response = await fetch(GRAPHQL_ENDPOINT, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': API_KEY,
-    },
+    headers,
     body: JSON.stringify({
       query,
       variables,
@@ -54,6 +75,8 @@ export const listMusicQuery = `
       file_url
       stream_url
       uploaded_at
+      user_id
+      username
     }
   }
 `;
@@ -68,6 +91,8 @@ export const getMusicQuery = `
       duration
       file_url
       uploaded_at
+      user_id
+      username
     }
   }
 `;
@@ -77,6 +102,33 @@ export const deleteMusicMutation = `
     deleteMusic(music_id: $music_id) {
       music_id
       title
+    }
+  }
+`;
+
+export const getCurrentUserQuery = `
+  query GetCurrentUser {
+    getCurrentUser {
+      user_id
+      username
+      email
+      fullname
+      created_at
+      total_tracks
+      total_plays
+      followers
+      following
+    }
+  }
+`;
+
+export const updateUserProfileMutation = `
+  mutation UpdateUserProfile($fullname: String) {
+    updateUserProfile(fullname: $fullname) {
+      user_id
+      username
+      email
+      fullname
     }
   }
 `;

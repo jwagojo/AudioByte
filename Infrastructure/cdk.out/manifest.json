@@ -18,7 +18,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-${AWS::Region}",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/e071871ec3891071b52cbbce502dc21a2c947c868240b5d33f4ea7ba371e8c3c.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/8a66e8721825e4c00b8e5bb450ea3281299b11b36fe5ad07bc61fd30e90b427a.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -34,6 +34,72 @@
         "InfrastructureStack.assets"
       ],
       "metadata": {
+        "/InfrastructureStack/AudioByteUserPool": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": {
+              "accountRecovery": 2,
+              "autoVerify": {
+                "email": true
+              },
+              "passwordPolicy": {
+                "minLength": "*",
+                "requireDigits": true,
+                "requireLowercase": true,
+                "requireSymbols": false,
+                "requireUppercase": true
+              },
+              "removalPolicy": "destroy",
+              "selfSignUpEnabled": true,
+              "signInAliases": {
+                "email": true,
+                "username": true
+              },
+              "standardAttributes": {},
+              "userPoolName": "*"
+            }
+          }
+        ],
+        "/InfrastructureStack/AudioByteUserPool/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AudioByteUserPool7C3BD1A5"
+          }
+        ],
+        "/InfrastructureStack/AudioByteUserPool/AudioByteAppClient": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": {
+              "userPool": "*",
+              "authFlows": {
+                "custom": true,
+                "userPassword": true,
+                "userSrp": true
+              },
+              "generateSecret": false,
+              "oAuth": {
+                "flows": {
+                  "authorizationCodeGrant": true,
+                  "implicitCodeGrant": true
+                },
+                "scopes": "*"
+              },
+              "userPoolClientName": "*"
+            }
+          }
+        ],
+        "/InfrastructureStack/AudioByteUserPool/AudioByteAppClient/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AudioByteUserPoolAudioByteAppClient07B7F39E"
+          }
+        ],
+        "/InfrastructureStack/AudioByteIdentityPool": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AudioByteIdentityPool"
+          }
+        ],
         "/InfrastructureStack/AudioByteMusic": [
           {
             "type": "aws:cdk:analytics:construct",
@@ -625,7 +691,10 @@
               "name": "*",
               "authorizationConfig": {
                 "defaultAuthorization": {
-                  "authorizationType": "API_KEY"
+                  "authorizationType": "*",
+                  "userPoolConfig": {
+                    "userPool": "*"
+                  }
                 }
               },
               "schema": "*",
@@ -1073,6 +1142,24 @@
           {
             "type": "aws:cdk:logicalId",
             "data": "GraphQLApiKey"
+          }
+        ],
+        "/InfrastructureStack/UserPoolId": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "UserPoolId"
+          }
+        ],
+        "/InfrastructureStack/UserPoolClientId": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "UserPoolClientId"
+          }
+        ],
+        "/InfrastructureStack/IdentityPoolId": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "IdentityPoolId"
           }
         ],
         "/InfrastructureStack/UploadFunctionArn": [
