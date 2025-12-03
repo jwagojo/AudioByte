@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """
 Clear all users from Cognito User Pool and their associated music
 """
@@ -6,7 +5,7 @@ Clear all users from Cognito User Pool and their associated music
 import boto3
 import sys
 
-USER_POOL_ID = "us-east-1_DgmyNJS0e"
+USER_POOL_ID = "us-east-1_jNUjgMKOn"
 DYNAMODB_TABLE = "audiobyte-metadata-6203"
 S3_BUCKET = "audiobyte-music-6203"
 
@@ -33,7 +32,6 @@ def delete_user_music(user_sub, username):
     print(f"  Scanning for music by user: {username} (ID: {user_sub})")
     
     try:
-        # Scan DynamoDB for user's music
         response = table.scan(
             FilterExpression='user_id = :uid',
             ExpressionAttributeValues={':uid': user_sub}
@@ -42,7 +40,6 @@ def delete_user_music(user_sub, username):
         items = response.get('Items', [])
         print(f"  Found {len(items)} track(s) to delete")
         
-        # Delete each track
         for item in items:
             music_id = item['music_id']
             title = item.get('title', 'Unknown')
@@ -50,14 +47,12 @@ def delete_user_music(user_sub, username):
             
             print(f"    - Deleting: {title}")
             
-            # Delete from S3
             try:
                 s3.delete_object(Bucket=S3_BUCKET, Key=s3_key)
                 print(f"      ✓ Deleted from S3: {s3_key}")
             except Exception as e:
                 print(f"      ✗ Failed to delete from S3: {str(e)}")
             
-            # Delete from DynamoDB
             try:
                 table.delete_item(Key={'music_id': music_id})
                 print(f"      ✓ Deleted from DynamoDB")
@@ -90,22 +85,18 @@ def clear_all_users():
         
         total_tracks_deleted = 0
         
-        # Delete each user and their music
         for user in users:
             username = user['Username']
             print(f"Processing user: {username}")
             
-            # Get user's sub (user_id)
             user_sub = get_user_sub(cognito, username)
             
             if user_sub:
-                # Delete user's music
                 tracks_deleted = delete_user_music(user_sub, username)
                 total_tracks_deleted += tracks_deleted
             else:
                 print(f"  ⚠ Skipping music deletion (no user_id found)")
             
-            # Delete user from Cognito
             try:
                 cognito.admin_delete_user(
                     UserPoolId=USER_POOL_ID,

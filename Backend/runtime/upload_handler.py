@@ -17,11 +17,8 @@ def handler(event, context):
     TABLE_NAME = os.environ['TABLE_NAME']
     table = dynamodb.Table(TABLE_NAME)
 
-    # Extract user identity from AppSync context
-    # AppSync passes identity in event['identity'] when using Cognito
     identity = event.get('identity', {})
     
-    # Check for Cognito claims
     claims = identity.get('claims', {})
     user_id = claims.get('sub') or identity.get('sub')
     username = claims.get('cognito:username') or identity.get('username')

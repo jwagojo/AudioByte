@@ -12,20 +12,19 @@ function Profile() {
   });
 
   const userTracks = [
-    { id: 1, title: 'My First Track', plays: '234', likes: 45 },
-    { id: 2, title: 'Weekend Jam', plays: '567', likes: 89 },
-    { id: 3, title: 'Experimental Beat', plays: '123', likes: 23 },
+    { id: 1, title: 'My First Track', plays: '0', likes: 0 },
+    { id: 2, title: 'Weekend Jam', plays: '0', likes: 0 },
+    { id: 3, title: 'Experimental Beat', plays: '0', likes: 0 },
   ];
 
-  // In the future, fetch user data from GraphQL API
+  
   useEffect(() => {
-    // TODO: Fetch real user statistics from GraphQL API
-    // For now, using mock data
+
     setUserStats({
-      totalTracks: 24,
-      totalPlays: 3400,
-      followers: 156,
-      following: 89,
+      totalTracks: 0,
+      totalPlays: 0,
+      followers: 0,
+      following: 0,
     });
   }, []);
 
@@ -73,22 +72,6 @@ function Profile() {
           <h3 className="text-2xl font-bold">{userStats.followers}</h3>
           <p className="text-gray-400">Followers</p>
         </div>
-      </div>
-      <h2 className="text-2xl font-bold mb-4">Your Tracks</h2>
-      <div className="space-y-3">
-        {userTracks.map((track) => (
-          <div 
-            key={track.id}
-            className="flex items-center gap-4 p-4 bg-gray-800 rounded-lg hover:bg-gray-750 transition"
-          >
-            <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-pink-500 rounded"></div>
-            <div className="flex-1">
-              <h3 className="font-semibold">{track.title}</h3>
-              <p className="text-sm text-gray-400">{track.plays} plays · {track.likes} likes</p>
-            </div>
-            <button className="text-gray-400 hover:text-white">Edit</button>
-          </div>
-        ))}
       </div>
     </div>
   );

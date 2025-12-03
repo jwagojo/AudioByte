@@ -34,7 +34,7 @@ function Login() {
           <div className="flex justify-center mb-4">
             <Music size={48} className="text-orange-500" />
           </div>
-          <h2 className="text-4xl font-bold text-white mb-2">Welcome Back</h2>
+          <h2 className="text-4xl font-bold text-white mb-2">Welcome</h2>
           <p className="text-gray-400">Sign in to your AudioByte account</p>
         </div>
 

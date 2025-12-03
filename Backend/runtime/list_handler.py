@@ -19,7 +19,6 @@ def handler(event, context):
     # Extract user identity from AppSync context
     identity = event.get('identity', {})
     
-    # Check for Cognito claims
     claims = identity.get('claims', {})
     user_id = claims.get('sub') or identity.get('sub')
     
@@ -30,14 +29,12 @@ def handler(event, context):
     if not user_id:
         raise Exception("User not authenticated - no user_id found in request")
 
-    # Scan for user's music (consider adding a GSI on user_id for better performance)
     response = table.scan(
         FilterExpression='user_id = :uid',
         ExpressionAttributeValues={':uid': user_id}
     )
     items = response.get('Items', [])
 
-    # Generate presigned URLs for streaming
     for item in items:
         if 's3_key' in item:
             item['stream_url'] = s3.generate_presigned_url(

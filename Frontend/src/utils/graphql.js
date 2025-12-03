@@ -8,13 +8,11 @@ export const graphqlRequest = async (query, variables = {}, useAuth = true) => {
     'Content-Type': 'application/json',
   };
 
-  // Always try to use Cognito authentication for user-specific operations
   if (useAuth) {
     try {
       const session = await fetchAuthSession();
       const token = session.tokens?.idToken?.toString();
       if (token) {
-        // AppSync expects the token in the Authorization header
         headers['Authorization'] = token;
         console.log('Using Cognito auth token');
       } else {
@@ -23,7 +21,6 @@ export const graphqlRequest = async (query, variables = {}, useAuth = true) => {
       }
     } catch (error) {
       console.error('Auth session error:', error);
-      // If auth fails, try API key as fallback
       headers['x-api-key'] = API_KEY;
     }
   } else {

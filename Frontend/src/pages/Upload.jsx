@@ -106,7 +106,6 @@ function Upload() {
         text: `Track "${title}" uploaded successfully! Redirecting to library...` 
       });
 
-      // Redirect to library after 2 seconds
       setTimeout(() => {
         navigate('/library');
       }, 2000);

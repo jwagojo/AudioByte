@@ -16,8 +16,6 @@ def handler(event, context):
     BUCKET_NAME = os.environ['BUCKET_NAME']
     table = dynamodb.Table(TABLE_NAME)
 
-    # This query doesn't require authentication check since it's public discovery
-    # But we still log if there's an authenticated user
     identity = event.get('identity', {})
     claims = identity.get('claims', {})
     user_id = claims.get('sub') or identity.get('sub')
@@ -28,7 +26,6 @@ def handler(event, context):
     response = table.scan()
     items = response.get('Items', [])
 
-    # Generate presigned URLs for streaming
     for item in items:
         if 's3_key' in item:
             item['stream_url'] = s3.generate_presigned_url(

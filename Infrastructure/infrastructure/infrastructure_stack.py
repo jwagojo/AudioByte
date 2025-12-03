@@ -25,7 +25,6 @@ class InfrastructureStack(Stack):
         #     visibility_timeout=Duration.seconds(300),
         # )
 
-        # Cognito User Pool for authentication
         user_pool = cognito.UserPool(self, "AudioByteUserPool",
             user_pool_name="audiobyte-users-6203",
             self_sign_up_enabled=True,
@@ -55,7 +54,6 @@ class InfrastructureStack(Stack):
             removal_policy=RemovalPolicy.DESTROY
         )
 
-        # Cognito User Pool Client
         user_pool_client = user_pool.add_client("AudioByteAppClient",
             user_pool_client_name="audiobyte-app-client-6203",
             auth_flows=cognito.AuthFlow(
@@ -77,7 +75,6 @@ class InfrastructureStack(Stack):
             )
         )
 
-        # Cognito Identity Pool
         identity_pool = cognito.CfnIdentityPool(self, "AudioByteIdentityPool",
             identity_pool_name="audiobyte_identity_pool_6203",
             allow_unauthenticated_identities=False,
@@ -87,7 +84,6 @@ class InfrastructureStack(Stack):
             )]
         )
 
-        # IAM roles for Identity Pool
         authenticated_role = iam.Role(self, "CognitoAuthenticatedRole",
             assumed_by=iam.FederatedPrincipal(
                 "cognito-identity.amazonaws.com",
@@ -103,7 +99,6 @@ class InfrastructureStack(Stack):
             )
         )
 
-        # Attach Identity Pool roles
         cognito.CfnIdentityPoolRoleAttachment(self, "IdentityPoolRoleAttachment",
             identity_pool_id=identity_pool.ref,
             roles={
