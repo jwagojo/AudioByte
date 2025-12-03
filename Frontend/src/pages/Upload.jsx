@@ -1,8 +1,12 @@
 import { useState, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Upload as UploadIcon, Image, Music, CheckCircle, AlertCircle } from 'lucide-react';
 import { graphqlRequest, createMusicMutation } from '../utils/graphql';
+import { useAuth } from '../context/AuthContext';
 
 function Upload() {
+  const navigate = useNavigate();
+  const { user, isAuthenticated } = useAuth();
   const [audioFile, setAudioFile] = useState(null);
   const [title, setTitle] = useState('');
   const [artist, setArtist] = useState('');
@@ -99,21 +103,13 @@ function Upload() {
       setUploadProgress(100);
       setMessage({ 
         type: 'success', 
-        text: `Track "${title}" uploaded successfully!` 
+        text: `Track "${title}" uploaded successfully! Redirecting to library...` 
       });
 
+      // Redirect to library after 2 seconds
       setTimeout(() => {
-        setAudioFile(null);
-        setTitle('');
-        setArtist('');
-        setAlbum('');
-        setGenre('Electronic');
-        setUploadProgress(0);
-        setMessage({ type: '', text: '' });
-        if (fileInputRef.current) {
-          fileInputRef.current.value = '';
-        }
-      }, 3000);
+        navigate('/library');
+      }, 2000);
 
     } catch (error) {
       console.error('Upload error:', error);
@@ -127,9 +123,28 @@ function Upload() {
     }
   };
 
+  if (!isAuthenticated) {
+    return (
+      <div className="max-w-3xl mx-auto px-4 py-8">
+        <div className="bg-gray-800 rounded-lg p-12 text-center">
+          <Music size={48} className="mx-auto mb-4 text-gray-400" />
+          <h2 className="text-2xl font-bold mb-2">Authentication Required</h2>
+          <p className="text-gray-400 mb-6">Please log in to upload tracks</p>
+          <button 
+            onClick={() => navigate('/login')}
+            className="px-6 py-3 bg-orange-500 hover:bg-orange-600 rounded-lg font-semibold transition"
+          >
+            Go to Login
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-3xl mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-8">Upload Your Track</h1>
+      <p className="text-gray-400 mb-6">Logged in as: {user?.username || user?.userId}</p>
       
       <div className="bg-gray-800 rounded-lg p-8">
         <div 

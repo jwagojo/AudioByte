@@ -25,6 +25,7 @@ type User {
 
 type Query {
   listMusic: [Music]
+  listAllMusic: [Music]
   getMusic(music_id: ID!): Music
   getCurrentUser: User
   getUser(user_id: ID!): User

@@ -1,5 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { Home, Search, Upload, Library, User, LogOut } from 'lucide-react';
+import { Home, Globe, Upload, Library, User, LogOut } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 function Navbar() {
@@ -27,6 +27,10 @@ function Navbar() {
             <Link to="/" className="flex items-center gap-2 hover:text-orange-500 transition">
               <Home size={20} />
               <span>Home</span>
+            </Link>
+            <Link to="/explore" className="flex items-center gap-2 hover:text-orange-500 transition">
+              <Globe size={20} />
+              <span>Explore</span>
             </Link>
             <Link to="/library" className="flex items-center gap-2 hover:text-orange-500 transition">
               <Library size={20} />

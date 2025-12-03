@@ -7,6 +7,7 @@ from aws_cdk import (
     aws_lambda as _lambda,
     aws_appsync as appsync,
     aws_cognito as cognito,
+    aws_iam as iam,
 )
 from constructs import Construct
 import os
@@ -86,6 +87,30 @@ class InfrastructureStack(Stack):
             )]
         )
 
+        # IAM roles for Identity Pool
+        authenticated_role = iam.Role(self, "CognitoAuthenticatedRole",
+            assumed_by=iam.FederatedPrincipal(
+                "cognito-identity.amazonaws.com",
+                {
+                    "StringEquals": {
+                        "cognito-identity.amazonaws.com:aud": identity_pool.ref
+                    },
+                    "ForAnyValue:StringLike": {
+                        "cognito-identity.amazonaws.com:amr": "authenticated"
+                    }
+                },
+                "sts:AssumeRoleWithWebIdentity"
+            )
+        )
+
+        # Attach Identity Pool roles
+        cognito.CfnIdentityPoolRoleAttachment(self, "IdentityPoolRoleAttachment",
+            identity_pool_id=identity_pool.ref,
+            roles={
+                "authenticated": authenticated_role.role_arn
+            }
+        )
+
         music_bucket = s3.Bucket(self, "AudioByteMusic",
             bucket_name="audiobyte-music-6203",
             removal_policy=RemovalPolicy.DESTROY,
@@ -130,6 +155,17 @@ class InfrastructureStack(Stack):
             }
         )
 
+        list_all_fn = _lambda.Function(self, "ListAllFunction",
+            function_name="audiobyte-list-all-6203",
+            runtime=_lambda.Runtime.PYTHON_3_9,
+            handler="list_all_handler.handler",
+            code=_lambda.Code.from_asset(code_path),
+            environment={
+                "BUCKET_NAME": music_bucket.bucket_name,
+                "TABLE_NAME": music_table.table_name
+            }
+        )
+
         delete_fn = _lambda.Function(self, "DeleteFunction",
             function_name="audiobyte-delete-6203",
             runtime=_lambda.Runtime.PYTHON_3_9,
@@ -143,9 +179,11 @@ class InfrastructureStack(Stack):
 
         music_bucket.grant_put(upload_fn)
         music_bucket.grant_read(list_fn)
+        music_bucket.grant_read(list_all_fn)
         music_bucket.grant_delete(delete_fn)
         music_table.grant_read_write_data(upload_fn)
         music_table.grant_read_data(list_fn)
+        music_table.grant_read_data(list_all_fn)
         music_table.grant_read_write_data(delete_fn)
 
         # GraphQL API with AppSync
@@ -183,6 +221,11 @@ class InfrastructureStack(Stack):
             list_fn
         )
 
+        list_all_data_source = graphql_api.add_lambda_data_source(
+            "ListAllDataSource",
+            list_all_fn
+        )
+
         delete_data_source = graphql_api.add_lambda_data_source(
             "DeleteDataSource",
             delete_fn
@@ -191,6 +234,11 @@ class InfrastructureStack(Stack):
         list_data_source.create_resolver("ListMusicResolver",
             type_name="Query",
             field_name="listMusic"
+        )
+
+        list_all_data_source.create_resolver("ListAllMusicResolver",
+            type_name="Query",
+            field_name="listAllMusic"
         )
 
         music_data_source.create_resolver("GetMusicResolver",

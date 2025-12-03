@@ -8,23 +8,29 @@ export const graphqlRequest = async (query, variables = {}, useAuth = true) => {
     'Content-Type': 'application/json',
   };
 
-  // Try to use Cognito authentication if available, otherwise fall back to API key
+  // Always try to use Cognito authentication for user-specific operations
   if (useAuth) {
     try {
       const session = await fetchAuthSession();
       const token = session.tokens?.idToken?.toString();
       if (token) {
+        // AppSync expects the token in the Authorization header
         headers['Authorization'] = token;
+        console.log('Using Cognito auth token');
       } else {
+        console.warn('No auth token available, using API key');
         headers['x-api-key'] = API_KEY;
       }
     } catch (error) {
-      // If auth fails, use API key
+      console.error('Auth session error:', error);
+      // If auth fails, try API key as fallback
       headers['x-api-key'] = API_KEY;
     }
   } else {
     headers['x-api-key'] = API_KEY;
   }
+
+  console.log('GraphQL Request:', { endpoint: GRAPHQL_ENDPOINT, hasAuth: !!headers['Authorization'] });
 
   const response = await fetch(GRAPHQL_ENDPOINT, {
     method: 'POST',
@@ -38,6 +44,7 @@ export const graphqlRequest = async (query, variables = {}, useAuth = true) => {
   const result = await response.json();
   
   if (result.errors) {
+    console.error('GraphQL Error:', result.errors);
     throw new Error(result.errors[0].message);
   }
 
@@ -67,6 +74,23 @@ export const createMusicMutation = `
 export const listMusicQuery = `
   query ListMusic {
     listMusic {
+      music_id
+      title
+      artist
+      album
+      duration
+      file_url
+      stream_url
+      uploaded_at
+      user_id
+      username
+    }
+  }
+`;
+
+export const listAllMusicQuery = `
+  query ListAllMusic {
+    listAllMusic {
       music_id
       title
       artist

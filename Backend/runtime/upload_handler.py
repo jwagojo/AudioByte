@@ -17,6 +17,22 @@ def handler(event, context):
     TABLE_NAME = os.environ['TABLE_NAME']
     table = dynamodb.Table(TABLE_NAME)
 
+    # Extract user identity from AppSync context
+    # AppSync passes identity in event['identity'] when using Cognito
+    identity = event.get('identity', {})
+    
+    # Check for Cognito claims
+    claims = identity.get('claims', {})
+    user_id = claims.get('sub') or identity.get('sub')
+    username = claims.get('cognito:username') or identity.get('username')
+    
+    print(f"Event received: {json.dumps(event)}")
+    print(f"Identity: {json.dumps(identity)}")
+    print(f"User ID: {user_id}, Username: {username}")
+    
+    if not user_id:
+        raise Exception("User not authenticated - no user_id found in request")
+
     try:
         arguments = event.get('arguments', {})
         title = arguments.get('title')
@@ -30,7 +46,7 @@ def handler(event, context):
         raise Exception(f"Invalid input: {str(e)}")
 
     music_id = str(uuid.uuid4())
-    key = f"music/{music_id}.mp3"
+    key = f"music/{user_id}/{music_id}.mp3"
 
     presigned_url = s3.generate_presigned_url(
         'put_object',
@@ -53,7 +69,9 @@ def handler(event, context):
         'duration': duration,
         'file_url': file_url,
         's3_key': key,
-        'uploaded_at': timestamp
+        'uploaded_at': timestamp,
+        'user_id': user_id,
+        'username': username or user_id
     })
 
     return {

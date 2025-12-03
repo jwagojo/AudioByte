@@ -1,7 +1,6 @@
 import boto3
 import os
 import json
-from boto3.dynamodb.conditions import Key
 from botocore.config import Config
 
 dynamodb = boto3.resource('dynamodb')
@@ -9,32 +8,24 @@ s3 = boto3.client('s3', config=Config(signature_version='s3v4'))
 
 def handler(event, context):
     """
-    AppSync Lambda handler for listMusic query
-    Returns list of music for the authenticated user with presigned streaming URLs
+    AppSync Lambda handler for listAllMusic query
+    Returns list of all music from all users with presigned streaming URLs
+    Read-only access for discovery/explore functionality
     """
     TABLE_NAME = os.environ['TABLE_NAME']
     BUCKET_NAME = os.environ['BUCKET_NAME']
     table = dynamodb.Table(TABLE_NAME)
 
-    # Extract user identity from AppSync context
+    # This query doesn't require authentication check since it's public discovery
+    # But we still log if there's an authenticated user
     identity = event.get('identity', {})
-    
-    # Check for Cognito claims
     claims = identity.get('claims', {})
     user_id = claims.get('sub') or identity.get('sub')
     
-    print(f"Event received: {json.dumps(event)}")
-    print(f"Identity: {json.dumps(identity)}")
-    print(f"User ID: {user_id}")
-    
-    if not user_id:
-        raise Exception("User not authenticated - no user_id found in request")
+    print(f"ListAllMusic called by user: {user_id or 'anonymous'}")
 
-    # Scan for user's music (consider adding a GSI on user_id for better performance)
-    response = table.scan(
-        FilterExpression='user_id = :uid',
-        ExpressionAttributeValues={':uid': user_id}
-    )
+    # Get all music from all users
+    response = table.scan()
     items = response.get('Items', [])
 
     # Generate presigned URLs for streaming

@@ -18,7 +18,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-${AWS::Region}",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/8a66e8721825e4c00b8e5bb450ea3281299b11b36fe5ad07bc61fd30e90b427a.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/3c32f31f18c49ff2c3a5bd646244d0699143573a397eb76100bc727a8daa14ca.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -98,6 +98,35 @@
           {
             "type": "aws:cdk:logicalId",
             "data": "AudioByteIdentityPool"
+          }
+        ],
+        "/InfrastructureStack/CognitoAuthenticatedRole": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": {
+              "assumedBy": {
+                "principalAccount": "*",
+                "assumeRoleAction": "*"
+              }
+            }
+          }
+        ],
+        "/InfrastructureStack/CognitoAuthenticatedRole/ImportCognitoAuthenticatedRole": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": "*"
+          }
+        ],
+        "/InfrastructureStack/CognitoAuthenticatedRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CognitoAuthenticatedRole5CA1BC89"
+          }
+        ],
+        "/InfrastructureStack/IdentityPoolRoleAttachment": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "IdentityPoolRoleAttachment"
           }
         ],
         "/InfrastructureStack/AudioByteMusic": [
@@ -530,6 +559,160 @@
             "data": "ListFunctionLogGroup0A803594"
           }
         ],
+        "/InfrastructureStack/ListAllFunction": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": {
+              "environment": "*",
+              "functionName": "*",
+              "code": "*",
+              "handler": "*",
+              "runtime": "*"
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addEnvironment": [
+                "*",
+                "*"
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addEnvironment": [
+                "*",
+                "*"
+              ]
+            }
+          }
+        ],
+        "/InfrastructureStack/ListAllFunction/ServiceRole": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": {
+              "assumedBy": {
+                "principalAccount": "*",
+                "assumeRoleAction": "*"
+              },
+              "managedPolicies": [
+                {
+                  "managedPolicyArn": "*"
+                }
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addToPrincipalPolicy": [
+                {}
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "attachInlinePolicy": [
+                "*"
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "attachInlinePolicy": [
+                "*"
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addToPrincipalPolicy": [
+                {}
+              ]
+            }
+          }
+        ],
+        "/InfrastructureStack/ListAllFunction/ServiceRole/ImportServiceRole": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": "*"
+          }
+        ],
+        "/InfrastructureStack/ListAllFunction/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ListAllFunctionServiceRole3C5A333E"
+          }
+        ],
+        "/InfrastructureStack/ListAllFunction/ServiceRole/DefaultPolicy": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": "*"
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "attachToRole": [
+                "*"
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "attachToRole": [
+                "*"
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addStatements": [
+                {}
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addStatements": [
+                {}
+              ]
+            }
+          }
+        ],
+        "/InfrastructureStack/ListAllFunction/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ListAllFunctionServiceRoleDefaultPolicyFFD663C9"
+          }
+        ],
+        "/InfrastructureStack/ListAllFunction/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ListAllFunctionAFE589A6"
+          }
+        ],
+        "/InfrastructureStack/ListAllFunction/LogGroup": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": {
+              "logGroupName": "*"
+            }
+          }
+        ],
+        "/InfrastructureStack/ListAllFunction/LogGroup/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ListAllFunctionLogGroup7CEC34D8"
+          }
+        ],
         "/InfrastructureStack/DeleteFunction": [
           {
             "type": "aws:cdk:analytics:construct",
@@ -699,6 +882,14 @@
               },
               "schema": "*",
               "xrayEnabled": true
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addSchemaDependency": [
+                "*"
+              ]
             }
           },
           {
@@ -1019,6 +1210,95 @@
             "data": "AudioByteGraphQLListDataSourceCDF21185"
           }
         ],
+        "/InfrastructureStack/AudioByteGraphQL/ListAllDataSource/ServiceRole": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": {
+              "assumedBy": {
+                "principalAccount": "*",
+                "assumeRoleAction": "*"
+              }
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addToPrincipalPolicy": [
+                {}
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "attachInlinePolicy": [
+                "*"
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "attachInlinePolicy": [
+                "*"
+              ]
+            }
+          }
+        ],
+        "/InfrastructureStack/AudioByteGraphQL/ListAllDataSource/ServiceRole/ImportServiceRole": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": "*"
+          }
+        ],
+        "/InfrastructureStack/AudioByteGraphQL/ListAllDataSource/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AudioByteGraphQLListAllDataSourceServiceRoleB78653AF"
+          }
+        ],
+        "/InfrastructureStack/AudioByteGraphQL/ListAllDataSource/ServiceRole/DefaultPolicy": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": "*"
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "attachToRole": [
+                "*"
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "attachToRole": [
+                "*"
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addStatements": [
+                {}
+              ]
+            }
+          }
+        ],
+        "/InfrastructureStack/AudioByteGraphQL/ListAllDataSource/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AudioByteGraphQLListAllDataSourceServiceRoleDefaultPolicyB3F54554"
+          }
+        ],
+        "/InfrastructureStack/AudioByteGraphQL/ListAllDataSource/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AudioByteGraphQLListAllDataSource5684CE37"
+          }
+        ],
         "/InfrastructureStack/AudioByteGraphQL/DeleteDataSource/ServiceRole": [
           {
             "type": "aws:cdk:analytics:construct",
@@ -1112,6 +1392,12 @@
           {
             "type": "aws:cdk:logicalId",
             "data": "AudioByteGraphQLListMusicResolverEF7FDC7E"
+          }
+        ],
+        "/InfrastructureStack/AudioByteGraphQL/ListAllMusicResolver/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AudioByteGraphQLListAllMusicResolver7E0CBDF4"
           }
         ],
         "/InfrastructureStack/AudioByteGraphQL/GetMusicResolver/Resource": [

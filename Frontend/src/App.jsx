@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import Home from './pages/Home';
+import Explore from './pages/Explore';
 import Library from './pages/Library';
 import Upload from './pages/Upload';
 import Profile from './pages/Profile';
@@ -28,6 +29,7 @@ function App() {
                     <main className="pb-24">
                       <Routes>
                         <Route path="/" element={<Home />} />
+                        <Route path="/explore" element={<Explore />} />
                         <Route path="/library" element={<Library />} />
                         <Route path="/upload" element={<Upload />} />
                         <Route path="/profile" element={<Profile />} />
