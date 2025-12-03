@@ -6,6 +6,8 @@ from aws_cdk import (
     aws_dynamodb as dynamodb,
     aws_lambda as _lambda,
     aws_appsync as appsync,
+    aws_cognito as cognito,
+    aws_iam as iam,
 )
 from constructs import Construct
 import os
@@ -22,6 +24,87 @@ class InfrastructureStack(Stack):
         #     self, "InfrastructureQueue",
         #     visibility_timeout=Duration.seconds(300),
         # )
+
+        user_pool = cognito.UserPool(self, "AudioByteUserPool",
+            user_pool_name="audiobyte-users-6203",
+            self_sign_up_enabled=True,
+            sign_in_aliases=cognito.SignInAliases(
+                email=True,
+                username=True
+            ),
+            auto_verify=cognito.AutoVerifiedAttrs(email=True),
+            standard_attributes=cognito.StandardAttributes(
+                email=cognito.StandardAttribute(
+                    required=True,
+                    mutable=True
+                ),
+                fullname=cognito.StandardAttribute(
+                    required=False,
+                    mutable=True
+                )
+            ),
+            password_policy=cognito.PasswordPolicy(
+                min_length=8,
+                require_lowercase=True,
+                require_uppercase=True,
+                require_digits=True,
+                require_symbols=False
+            ),
+            account_recovery=cognito.AccountRecovery.EMAIL_ONLY,
+            removal_policy=RemovalPolicy.DESTROY
+        )
+
+        user_pool_client = user_pool.add_client("AudioByteAppClient",
+            user_pool_client_name="audiobyte-app-client-6203",
+            auth_flows=cognito.AuthFlow(
+                user_password=True,
+                user_srp=True,
+                custom=True
+            ),
+            generate_secret=False,
+            o_auth=cognito.OAuthSettings(
+                flows=cognito.OAuthFlows(
+                    authorization_code_grant=True,
+                    implicit_code_grant=True
+                ),
+                scopes=[
+                    cognito.OAuthScope.EMAIL,
+                    cognito.OAuthScope.OPENID,
+                    cognito.OAuthScope.PROFILE
+                ]
+            )
+        )
+
+        identity_pool = cognito.CfnIdentityPool(self, "AudioByteIdentityPool",
+            identity_pool_name="audiobyte_identity_pool_6203",
+            allow_unauthenticated_identities=False,
+            cognito_identity_providers=[cognito.CfnIdentityPool.CognitoIdentityProviderProperty(
+                client_id=user_pool_client.user_pool_client_id,
+                provider_name=user_pool.user_pool_provider_name
+            )]
+        )
+
+        authenticated_role = iam.Role(self, "CognitoAuthenticatedRole",
+            assumed_by=iam.FederatedPrincipal(
+                "cognito-identity.amazonaws.com",
+                {
+                    "StringEquals": {
+                        "cognito-identity.amazonaws.com:aud": identity_pool.ref
+                    },
+                    "ForAnyValue:StringLike": {
+                        "cognito-identity.amazonaws.com:amr": "authenticated"
+                    }
+                },
+                "sts:AssumeRoleWithWebIdentity"
+            )
+        )
+
+        cognito.CfnIdentityPoolRoleAttachment(self, "IdentityPoolRoleAttachment",
+            identity_pool_id=identity_pool.ref,
+            roles={
+                "authenticated": authenticated_role.role_arn
+            }
+        )
 
         music_bucket = s3.Bucket(self, "AudioByteMusic",
             bucket_name="audiobyte-music-6203",
@@ -67,6 +150,17 @@ class InfrastructureStack(Stack):
             }
         )
 
+        list_all_fn = _lambda.Function(self, "ListAllFunction",
+            function_name="audiobyte-list-all-6203",
+            runtime=_lambda.Runtime.PYTHON_3_9,
+            handler="list_all_handler.handler",
+            code=_lambda.Code.from_asset(code_path),
+            environment={
+                "BUCKET_NAME": music_bucket.bucket_name,
+                "TABLE_NAME": music_table.table_name
+            }
+        )
+
         delete_fn = _lambda.Function(self, "DeleteFunction",
             function_name="audiobyte-delete-6203",
             runtime=_lambda.Runtime.PYTHON_3_9,
@@ -80,9 +174,11 @@ class InfrastructureStack(Stack):
 
         music_bucket.grant_put(upload_fn)
         music_bucket.grant_read(list_fn)
+        music_bucket.grant_read(list_all_fn)
         music_bucket.grant_delete(delete_fn)
         music_table.grant_read_write_data(upload_fn)
         music_table.grant_read_data(list_fn)
+        music_table.grant_read_data(list_all_fn)
         music_table.grant_read_write_data(delete_fn)
 
         # GraphQL API with AppSync
@@ -91,8 +187,16 @@ class InfrastructureStack(Stack):
             schema=appsync.SchemaFile.from_asset(os.path.join(os.path.dirname(__file__), "..", "schema.graphql")),
             authorization_config=appsync.AuthorizationConfig(
                 default_authorization=appsync.AuthorizationMode(
-                    authorization_type=appsync.AuthorizationType.API_KEY
-                )
+                    authorization_type=appsync.AuthorizationType.USER_POOL,
+                    user_pool_config=appsync.UserPoolConfig(
+                        user_pool=user_pool
+                    )
+                ),
+                additional_authorization_modes=[
+                    appsync.AuthorizationMode(
+                        authorization_type=appsync.AuthorizationType.API_KEY
+                    )
+                ]
             ),
             xray_enabled=True
         )
@@ -112,6 +216,11 @@ class InfrastructureStack(Stack):
             list_fn
         )
 
+        list_all_data_source = graphql_api.add_lambda_data_source(
+            "ListAllDataSource",
+            list_all_fn
+        )
+
         delete_data_source = graphql_api.add_lambda_data_source(
             "DeleteDataSource",
             delete_fn
@@ -120,6 +229,11 @@ class InfrastructureStack(Stack):
         list_data_source.create_resolver("ListMusicResolver",
             type_name="Query",
             field_name="listMusic"
+        )
+
+        list_all_data_source.create_resolver("ListAllMusicResolver",
+            type_name="Query",
+            field_name="listAllMusic"
         )
 
         music_data_source.create_resolver("GetMusicResolver",
@@ -147,6 +261,21 @@ class InfrastructureStack(Stack):
         CfnOutput(self, "GraphQLApiKey",
             value=graphql_api.api_key or "No API Key",
             description="GraphQL API Key"
+        )
+
+        CfnOutput(self, "UserPoolId",
+            value=user_pool.user_pool_id,
+            description="Cognito User Pool ID"
+        )
+
+        CfnOutput(self, "UserPoolClientId",
+            value=user_pool_client.user_pool_client_id,
+            description="Cognito User Pool Client ID"
+        )
+
+        CfnOutput(self, "IdentityPoolId",
+            value=identity_pool.ref,
+            description="Cognito Identity Pool ID"
         )
 
         CfnOutput(self, "UploadFunctionArn",

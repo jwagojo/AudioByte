@@ -1,5 +1,170 @@
 {
  "Resources": {
+  "AudioByteUserPool7C3BD1A5": {
+   "Type": "AWS::Cognito::UserPool",
+   "Properties": {
+    "AccountRecoverySetting": {
+     "RecoveryMechanisms": [
+      {
+       "Name": "verified_email",
+       "Priority": 1
+      }
+     ]
+    },
+    "AdminCreateUserConfig": {
+     "AllowAdminCreateUserOnly": false
+    },
+    "AliasAttributes": [
+     "email"
+    ],
+    "AutoVerifiedAttributes": [
+     "email"
+    ],
+    "EmailVerificationMessage": "The verification code to your new account is {####}",
+    "EmailVerificationSubject": "Verify your new account",
+    "Policies": {
+     "PasswordPolicy": {
+      "MinimumLength": 8,
+      "RequireLowercase": true,
+      "RequireNumbers": true,
+      "RequireSymbols": false,
+      "RequireUppercase": true
+     }
+    },
+    "Schema": [
+     {
+      "Mutable": true,
+      "Name": "email",
+      "Required": true
+     },
+     {
+      "Mutable": true,
+      "Name": "name",
+      "Required": false
+     }
+    ],
+    "SmsVerificationMessage": "The verification code to your new account is {####}",
+    "UserPoolName": "audiobyte-users-6203",
+    "VerificationMessageTemplate": {
+     "DefaultEmailOption": "CONFIRM_WITH_CODE",
+     "EmailMessage": "The verification code to your new account is {####}",
+     "EmailSubject": "Verify your new account",
+     "SmsMessage": "The verification code to your new account is {####}"
+    }
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "InfrastructureStack/AudioByteUserPool/Resource"
+   }
+  },
+  "AudioByteUserPoolAudioByteAppClient07B7F39E": {
+   "Type": "AWS::Cognito::UserPoolClient",
+   "Properties": {
+    "AllowedOAuthFlows": [
+     "implicit",
+     "code"
+    ],
+    "AllowedOAuthFlowsUserPoolClient": true,
+    "AllowedOAuthScopes": [
+     "email",
+     "openid",
+     "profile"
+    ],
+    "CallbackURLs": [
+     "https://example.com"
+    ],
+    "ClientName": "audiobyte-app-client-6203",
+    "ExplicitAuthFlows": [
+     "ALLOW_USER_PASSWORD_AUTH",
+     "ALLOW_CUSTOM_AUTH",
+     "ALLOW_USER_SRP_AUTH",
+     "ALLOW_REFRESH_TOKEN_AUTH"
+    ],
+    "GenerateSecret": false,
+    "SupportedIdentityProviders": [
+     "COGNITO"
+    ],
+    "UserPoolId": {
+     "Ref": "AudioByteUserPool7C3BD1A5"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "InfrastructureStack/AudioByteUserPool/AudioByteAppClient/Resource"
+   }
+  },
+  "AudioByteIdentityPool": {
+   "Type": "AWS::Cognito::IdentityPool",
+   "Properties": {
+    "AllowUnauthenticatedIdentities": false,
+    "CognitoIdentityProviders": [
+     {
+      "ClientId": {
+       "Ref": "AudioByteUserPoolAudioByteAppClient07B7F39E"
+      },
+      "ProviderName": {
+       "Fn::GetAtt": [
+        "AudioByteUserPool7C3BD1A5",
+        "ProviderName"
+       ]
+      }
+     }
+    ],
+    "IdentityPoolName": "audiobyte_identity_pool_6203"
+   },
+   "Metadata": {
+    "aws:cdk:path": "InfrastructureStack/AudioByteIdentityPool"
+   }
+  },
+  "CognitoAuthenticatedRole5CA1BC89": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRoleWithWebIdentity",
+       "Condition": {
+        "StringEquals": {
+         "cognito-identity.amazonaws.com:aud": {
+          "Ref": "AudioByteIdentityPool"
+         }
+        },
+        "ForAnyValue:StringLike": {
+         "cognito-identity.amazonaws.com:amr": "authenticated"
+        }
+       },
+       "Effect": "Allow",
+       "Principal": {
+        "Federated": "cognito-identity.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "InfrastructureStack/CognitoAuthenticatedRole/Resource"
+   }
+  },
+  "IdentityPoolRoleAttachment": {
+   "Type": "AWS::Cognito::IdentityPoolRoleAttachment",
+   "Properties": {
+    "IdentityPoolId": {
+     "Ref": "AudioByteIdentityPool"
+    },
+    "Roles": {
+     "authenticated": {
+      "Fn::GetAtt": [
+       "CognitoAuthenticatedRole5CA1BC89",
+       "Arn"
+      ]
+     }
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "InfrastructureStack/IdentityPoolRoleAttachment"
+   }
+  },
   "AudioByteMusic9C0BFD0D": {
    "Type": "AWS::S3::Bucket",
    "Properties": {
@@ -318,7 +483,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "d698ce0b96f70d559e675973852fec93810b356e460df2bdb8da2e7c74a71e31.zip"
+     "S3Key": "7d0f160e7eeebbb1f5cc99abe62c649ca2da2af8540d3cc99faa00afca8931b7.zip"
     },
     "Environment": {
      "Variables": {
@@ -346,7 +511,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "InfrastructureStack/UploadFunction/Resource",
-    "aws:asset:path": "asset.d698ce0b96f70d559e675973852fec93810b356e460df2bdb8da2e7c74a71e31",
+    "aws:asset:path": "asset.7d0f160e7eeebbb1f5cc99abe62c649ca2da2af8540d3cc99faa00afca8931b7",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -487,7 +652,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "d698ce0b96f70d559e675973852fec93810b356e460df2bdb8da2e7c74a71e31.zip"
+     "S3Key": "7d0f160e7eeebbb1f5cc99abe62c649ca2da2af8540d3cc99faa00afca8931b7.zip"
     },
     "Environment": {
      "Variables": {
@@ -515,7 +680,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "InfrastructureStack/ListFunction/Resource",
-    "aws:asset:path": "asset.d698ce0b96f70d559e675973852fec93810b356e460df2bdb8da2e7c74a71e31",
+    "aws:asset:path": "asset.7d0f160e7eeebbb1f5cc99abe62c649ca2da2af8540d3cc99faa00afca8931b7",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -540,6 +705,175 @@
    "DeletionPolicy": "Retain",
    "Metadata": {
     "aws:cdk:path": "InfrastructureStack/ListFunction/LogGroup/Resource"
+   }
+  },
+  "ListAllFunctionServiceRole3C5A333E": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "InfrastructureStack/ListAllFunction/ServiceRole/Resource"
+   }
+  },
+  "ListAllFunctionServiceRoleDefaultPolicyFFD663C9": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "s3:GetBucket*",
+        "s3:GetObject*",
+        "s3:List*"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "AudioByteMusic9C0BFD0D",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "AudioByteMusic9C0BFD0D",
+             "Arn"
+            ]
+           },
+           "/*"
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:DescribeTable",
+        "dynamodb:GetItem",
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator",
+        "dynamodb:Query",
+        "dynamodb:Scan"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "AudioByteMeta75211A69",
+          "Arn"
+         ]
+        },
+        {
+         "Ref": "AWS::NoValue"
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "ListAllFunctionServiceRoleDefaultPolicyFFD663C9",
+    "Roles": [
+     {
+      "Ref": "ListAllFunctionServiceRole3C5A333E"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "InfrastructureStack/ListAllFunction/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "ListAllFunctionAFE589A6": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+     },
+     "S3Key": "7d0f160e7eeebbb1f5cc99abe62c649ca2da2af8540d3cc99faa00afca8931b7.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "BUCKET_NAME": {
+       "Ref": "AudioByteMusic9C0BFD0D"
+      },
+      "TABLE_NAME": {
+       "Ref": "AudioByteMeta75211A69"
+      }
+     }
+    },
+    "FunctionName": "audiobyte-list-all-6203",
+    "Handler": "list_all_handler.handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "ListAllFunctionServiceRole3C5A333E",
+      "Arn"
+     ]
+    },
+    "Runtime": "python3.9"
+   },
+   "DependsOn": [
+    "ListAllFunctionServiceRoleDefaultPolicyFFD663C9",
+    "ListAllFunctionServiceRole3C5A333E"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "InfrastructureStack/ListAllFunction/Resource",
+    "aws:asset:path": "asset.7d0f160e7eeebbb1f5cc99abe62c649ca2da2af8540d3cc99faa00afca8931b7",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "ListAllFunctionLogGroup7CEC34D8": {
+   "Type": "AWS::Logs::LogGroup",
+   "Properties": {
+    "LogGroupName": {
+     "Fn::Join": [
+      "",
+      [
+       "/aws/lambda/",
+       {
+        "Ref": "ListAllFunctionAFE589A6"
+       }
+      ]
+     ]
+    },
+    "RetentionInDays": 731
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "InfrastructureStack/ListAllFunction/LogGroup/Resource"
    }
   },
   "DeleteFunctionServiceRole092E9E58": {
@@ -648,7 +982,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "d698ce0b96f70d559e675973852fec93810b356e460df2bdb8da2e7c74a71e31.zip"
+     "S3Key": "7d0f160e7eeebbb1f5cc99abe62c649ca2da2af8540d3cc99faa00afca8931b7.zip"
     },
     "Environment": {
      "Variables": {
@@ -676,7 +1010,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "InfrastructureStack/DeleteFunction/Resource",
-    "aws:asset:path": "asset.d698ce0b96f70d559e675973852fec93810b356e460df2bdb8da2e7c74a71e31",
+    "aws:asset:path": "asset.7d0f160e7eeebbb1f5cc99abe62c649ca2da2af8540d3cc99faa00afca8931b7",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -706,8 +1040,22 @@
   "AudioByteGraphQLAA2EE0CC": {
    "Type": "AWS::AppSync::GraphQLApi",
    "Properties": {
-    "AuthenticationType": "API_KEY",
+    "AdditionalAuthenticationProviders": [
+     {
+      "AuthenticationType": "API_KEY"
+     }
+    ],
+    "AuthenticationType": "AMAZON_COGNITO_USER_POOLS",
     "Name": "audiobyte-graphql-6203",
+    "UserPoolConfig": {
+     "AwsRegion": {
+      "Ref": "AWS::Region"
+     },
+     "DefaultAction": "ALLOW",
+     "UserPoolId": {
+      "Ref": "AudioByteUserPool7C3BD1A5"
+     }
+    },
     "XrayEnabled": true
    },
    "Metadata": {
@@ -723,7 +1071,7 @@
       "ApiId"
      ]
     },
-    "Definition": "type Music {\r\n  music_id: ID!\r\n  title: String!\r\n  artist: String\r\n  album: String\r\n  duration: Int\r\n  file_url: String!\r\n  stream_url: String\r\n  uploaded_at: AWSDateTime!\r\n}\r\n\r\ntype Query {\r\n  listMusic: [Music]\r\n  getMusic(music_id: ID!): Music\r\n}\r\n\r\ntype Mutation {\r\n  createMusic(\r\n    title: String!\r\n    artist: String\r\n    album: String\r\n    duration: Int\r\n  ): MusicUploadResponse\r\n  deleteMusic(music_id: ID!): Music\r\n}\r\n\r\ntype MusicUploadResponse {\r\n  music_id: ID!\r\n  upload_url: String!\r\n  message: String!\r\n}\r\n\r\nschema {\r\n  query: Query\r\n  mutation: Mutation\r\n}\r\n"
+    "Definition": "type Music {\r\n  music_id: ID!\r\n  title: String!\r\n  artist: String\r\n  album: String\r\n  duration: Int\r\n  file_url: String!\r\n  stream_url: String\r\n  uploaded_at: AWSDateTime!\r\n  user_id: String!\r\n  username: String\r\n}\r\n\r\ntype User {\r\n  user_id: ID!\r\n  username: String!\r\n  email: String!\r\n  fullname: String\r\n  created_at: AWSDateTime!\r\n  total_tracks: Int\r\n  total_plays: Int\r\n  followers: Int\r\n  following: Int\r\n}\r\n\r\ntype Query {\r\n  listMusic: [Music]\r\n  listAllMusic: [Music]\r\n  getMusic(music_id: ID!): Music\r\n  getCurrentUser: User\r\n  getUser(user_id: ID!): User\r\n}\r\n\r\ntype Mutation {\r\n  createMusic(\r\n    title: String!\r\n    artist: String\r\n    album: String\r\n    duration: Int\r\n  ): MusicUploadResponse\r\n  deleteMusic(music_id: ID!): Music\r\n  updateUserProfile(fullname: String): User\r\n}\r\n\r\ntype MusicUploadResponse {\r\n  music_id: ID!\r\n  upload_url: String!\r\n  message: String!\r\n}\r\n\r\nschema {\r\n  query: Query\r\n  mutation: Mutation\r\n}\r\n"
    },
    "Metadata": {
     "aws:cdk:path": "InfrastructureStack/AudioByteGraphQL/Schema"
@@ -1033,6 +1381,101 @@
     "aws:cdk:path": "InfrastructureStack/AudioByteGraphQL/ListDataSource/Resource"
    }
   },
+  "AudioByteGraphQLListAllDataSourceServiceRoleB78653AF": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "appsync.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "InfrastructureStack/AudioByteGraphQL/ListAllDataSource/ServiceRole/Resource"
+   }
+  },
+  "AudioByteGraphQLListAllDataSourceServiceRoleDefaultPolicyB3F54554": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "lambda:InvokeFunction",
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "ListAllFunctionAFE589A6",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "ListAllFunctionAFE589A6",
+             "Arn"
+            ]
+           },
+           ":*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "AudioByteGraphQLListAllDataSourceServiceRoleDefaultPolicyB3F54554",
+    "Roles": [
+     {
+      "Ref": "AudioByteGraphQLListAllDataSourceServiceRoleB78653AF"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "InfrastructureStack/AudioByteGraphQL/ListAllDataSource/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "AudioByteGraphQLListAllDataSource5684CE37": {
+   "Type": "AWS::AppSync::DataSource",
+   "Properties": {
+    "ApiId": {
+     "Fn::GetAtt": [
+      "AudioByteGraphQLAA2EE0CC",
+      "ApiId"
+     ]
+    },
+    "LambdaConfig": {
+     "LambdaFunctionArn": {
+      "Fn::GetAtt": [
+       "ListAllFunctionAFE589A6",
+       "Arn"
+      ]
+     }
+    },
+    "Name": "ListAllDataSource",
+    "ServiceRoleArn": {
+     "Fn::GetAtt": [
+      "AudioByteGraphQLListAllDataSourceServiceRoleB78653AF",
+      "Arn"
+     ]
+    },
+    "Type": "AWS_LAMBDA"
+   },
+   "Metadata": {
+    "aws:cdk:path": "InfrastructureStack/AudioByteGraphQL/ListAllDataSource/Resource"
+   }
+  },
   "AudioByteGraphQLDeleteDataSourceServiceRole562BCC28": {
    "Type": "AWS::IAM::Role",
    "Properties": {
@@ -1150,6 +1593,28 @@
     "aws:cdk:path": "InfrastructureStack/AudioByteGraphQL/ListMusicResolver/Resource"
    }
   },
+  "AudioByteGraphQLListAllMusicResolver7E0CBDF4": {
+   "Type": "AWS::AppSync::Resolver",
+   "Properties": {
+    "ApiId": {
+     "Fn::GetAtt": [
+      "AudioByteGraphQLAA2EE0CC",
+      "ApiId"
+     ]
+    },
+    "DataSourceName": "ListAllDataSource",
+    "FieldName": "listAllMusic",
+    "Kind": "UNIT",
+    "TypeName": "Query"
+   },
+   "DependsOn": [
+    "AudioByteGraphQLListAllDataSource5684CE37",
+    "AudioByteGraphQLSchema9ED22681"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "InfrastructureStack/AudioByteGraphQL/ListAllMusicResolver/Resource"
+   }
+  },
   "AudioByteGraphQLGetMusicResolver329DFA3C": {
    "Type": "AWS::AppSync::Resolver",
    "Properties": {
@@ -1221,7 +1686,7 @@
   "CDKMetadata": {
    "Type": "AWS::CDK::Metadata",
    "Properties": {
-    "Analytics": "v2:deflate64:H4sIAAAAAAAA/+1WUW/TMBD+LfPj5AW2CiH1LWvLNq2w0pYHFFXTNb623hw72E5HsPLfkZ2kSxkMXvYA9KG1fd/58+fz2bmz6Oz0TfT6CB7MScruTwRfRm5mIb2n8GBunelF7rxI79EmjkBh1RAFWrxZ3mFqDelbXSAly+DxATIkfXJMKEmVNqTvpwihHpC9R7tRzJvI5NOcUHIx8v+Xo3hIKBmOxqP5iCxo636j+ZpL05A1xksEhro2VgtKNGZqC2KiBE9L0icMjdWqJBV1BBgbKG2mhcAXlUEDckwW1YIOVrKOFK2bWljimui0unduNd44n4PBZFFRVkrIFFtGbg5LgYkjOWjLLVfyGkvSd0Q+RtmWue/OvI5fRYMS64l2Z1MrCOQVFZAtGUTuXSFTv0TiCMot10pmKG2zyqoB946Xtd0NSCZQNyNdSMvblepzGHUJk128fgcedHTAcGbtIVWUQxa5qQrpAcYUGbLzkBu55jLlOYg4TVWxU1z7+AlxYGhzNwMJa2QhZzjWF7ZrK2Pd+Lb65mrSLtFmWuIa1FpIN1dScIk7bLe1Z8HneQ8b/G83+KKaD6r+ZlXhSfSr0eY760W0E+bKI094npoZm1mw6N9b05H0M/OB/58nCjlVp1NFTe8WjEFrotg3VKi1idxYrS+0KvLEEdF0H0sr+sfGsFLLVVHIc1PKNHIXGvLNFxHnPNmr9KCwG6X5N/A3a6Dkiq/9VWS4gkLYuIt6+577vK4S48nV7fXos7+SxKQbzKDh/qqhHElfELK6nm/DE5yGmKNkKH98718CDVEJIfg4jnPeGdUzvCHO+TWWdBjq5OFyCBZmqtAperAzGofStmOYolFiizq8G02/quigMFZl3uC9go7Wo2bdwydabTlD7ct1GvJiZmHN5Zp2Gegzv8B+U9i8sBWdlHaj5KtedNqL3h7dGc5PmooxmtbtdzVFdPWgDQAA"
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/+1YW2/bNhT+LeVjwGhrgmGA3xTbTYN6ixc7exGM4pg8ltlQpEpS9lRB/30gdbHsrBegFxSDH2xR37kfHR7x6Cq6evlb9OsL2NtLxp8upVhH1cIBe6Kwt28rplMlnI6qR4tmrrVMKgKM6UK5B2R6h6YkoytKoHD6bzRiU5JRRTADIcnImQJrSnKwdq8Nn2spWKBnQs1QpW5LRuSCUGLwfSEMTkQqnG3kenCm92gYWDzBF2W21tKS0QakPcCPeT5krz0h0zuQnXXC0TqjS0KJRblZiFQ95lMFa4m8M2FFqu5ULAVYtCcBUVJYNAqygwXrQHEwPHbOiHXhgkzdMPqc/RmYyQWpV3S8UV0qabcYS4HKJVUv0KYFCrd9JfU+uMAK63Q29GHe5nWILUzeu5WiQgMOF8gMuj5ROi584iuy6VR7O9qID+CEVmPN8daAcp1akeVSMOFOCD5upnMfq4/sEG0TzUdibogeueOonHBlyMTJ/YOWGDsHbJuhcjUVkEWVB331WVtkyG9CIeVGKCZykHFTk13iAk/QwnxMjSM1/RppSjJQkGJTxsLHnVRHWBmblncVTHG+1PPORFd+SdVSQ3h3SgqFPY1ckC8gflrvOcBzgP/XAL+rz2evzl59a6/Cu89bow3u0V5gqT3lmZ7nMOcLBw79u9AOXPov+Kz/B+k/K/qsolD8Td3X1F5H1U3BntCfc/20MEGJDu/X75AdzvzrwNGfHSlh2jRvMZBS75H/gW6ruYfI/HFJKLmd+v/X03hCKJlMZ9PllKxox35vRCqU7TZ/A75G4Ghsdzr96IDQxjXWxj4UIdrv50ZI+qFlNJmizaVtHVWbncGpekhvmW/AYrKqKS8VZJqvo2rpR5ukIjkYJ3zPe4OhQ6pDll2Z++WCfHJccl7Rybk+KK+phGzNIapeFSq01aQiqHbCaOULorWyaYlHj5d3yy0oLtF0E2GhnOgsNc9hOlSY9Pn6HPHsx0/oR6idrlh8c3gL1qKzUewvVOrURtVMp7dGF3lSEdkuD9VHvw4MDnQGagp5bkvFourWQL59L+NcJEc75GREVhuR+j3EcQOFdPGQ+myiXja7y6vpZ+Rew9HIX9dhqt5iBq3APwbKo48TXbMNTBPMUXFUp4fvH08N+QzJ+2sW52Jw10h4IM7FGyzpJHSmyXoCDha6MAw9cXA3C81kADyg1XKHJhym2nVdB9jTu7L6kt+KjsN3lKHsqtPb+HJEnxu9ExyNb6s0FOfCQSpU6mXuC5cXrqbz0m21+uU6enkd/f7inRXist0n0UNz/RdkZftjZxMAAA=="
    },
    "Metadata": {
     "aws:cdk:path": "InfrastructureStack/CDKMetadata/Default"
@@ -1246,6 +1711,24 @@
      "AudioByteGraphQLDefaultApiKey9282B2CE",
      "ApiKey"
     ]
+   }
+  },
+  "UserPoolId": {
+   "Description": "Cognito User Pool ID",
+   "Value": {
+    "Ref": "AudioByteUserPool7C3BD1A5"
+   }
+  },
+  "UserPoolClientId": {
+   "Description": "Cognito User Pool Client ID",
+   "Value": {
+    "Ref": "AudioByteUserPoolAudioByteAppClient07B7F39E"
+   }
+  },
+  "IdentityPoolId": {
+   "Description": "Cognito Identity Pool ID",
+   "Value": {
+    "Ref": "AudioByteIdentityPool"
    }
   },
   "UploadFunctionArn": {
