@@ -1,5 +1,7 @@
 # AudioByte - Serverless Music Streaming Platform, Upload and stream
 
+Repo Url - https://github.com/jwagojo/AudioByte
+
 # Members - Mohammed Aldulaimy, John Wesley Agojo, and Calvin Yorn, Ashton Roxas, and Sowndaryan Jayaprakashanand
 
 A full stack cloud music streaming web-app built using AWS services. Includes user authentication, file uploads, and real time streaming.
