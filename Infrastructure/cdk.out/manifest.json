@@ -18,7 +18,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-${AWS::Region}",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/3c32f31f18c49ff2c3a5bd646244d0699143573a397eb76100bc727a8daa14ca.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/11a25bf1758db4c76c9659e3c9ddb1e4efe9041e157a90c9e2993f661b88ffc0.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -109,6 +109,38 @@
                 "assumeRoleAction": "*"
               }
             }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addToPolicy": [
+                {}
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addToPrincipalPolicy": [
+                {}
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "attachInlinePolicy": [
+                "*"
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "attachInlinePolicy": [
+                "*"
+              ]
+            }
           }
         ],
         "/InfrastructureStack/CognitoAuthenticatedRole/ImportCognitoAuthenticatedRole": [
@@ -121,6 +153,42 @@
           {
             "type": "aws:cdk:logicalId",
             "data": "CognitoAuthenticatedRole5CA1BC89"
+          }
+        ],
+        "/InfrastructureStack/CognitoAuthenticatedRole/DefaultPolicy": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": "*"
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "attachToRole": [
+                "*"
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "attachToRole": [
+                "*"
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addStatements": [
+                {}
+              ]
+            }
+          }
+        ],
+        "/InfrastructureStack/CognitoAuthenticatedRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CognitoAuthenticatedRoleDefaultPolicyA138AC36"
           }
         ],
         "/InfrastructureStack/IdentityPoolRoleAttachment": [
@@ -1418,6 +1486,90 @@
             "data": "AudioByteGraphQLDeleteMusicResolver7105B912"
           }
         ],
+        "/InfrastructureStack/AudioByteDashboard": [
+          {
+            "type": "aws:cdk:analytics:construct",
+            "data": {
+              "dashboardName": "*"
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addWidgets": [
+                {
+                  "warnings": "*",
+                  "warningsV2": "*",
+                  "width": "*",
+                  "height": "*"
+                },
+                "*"
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addWidgets": [
+                {
+                  "warnings": "*",
+                  "warningsV2": "*",
+                  "width": "*",
+                  "height": "*"
+                },
+                "*"
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addWidgets": [
+                {
+                  "warnings": "*",
+                  "warningsV2": "*",
+                  "width": "*",
+                  "height": "*"
+                },
+                "*"
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addWidgets": [
+                {
+                  "warnings": "*",
+                  "warningsV2": "*",
+                  "width": "*",
+                  "height": "*"
+                },
+                "*"
+              ]
+            }
+          },
+          {
+            "type": "aws:cdk:analytics:method",
+            "data": {
+              "addWidgets": [
+                {
+                  "warnings": "*",
+                  "warningsV2": "*",
+                  "width": "*",
+                  "height": "*"
+                },
+                "*"
+              ]
+            }
+          }
+        ],
+        "/InfrastructureStack/AudioByteDashboard/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AudioByteDashboard815BCDAC"
+          }
+        ],
         "/InfrastructureStack/GraphQLApiUrl": [
           {
             "type": "aws:cdk:logicalId",
@@ -1464,6 +1616,12 @@
           {
             "type": "aws:cdk:logicalId",
             "data": "DeleteFunctionArn"
+          }
+        ],
+        "/InfrastructureStack/CloudWatchDashboardUrl": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CloudWatchDashboardUrl"
           }
         ],
         "/InfrastructureStack/CDKMetadata/Default": [

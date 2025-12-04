@@ -2,12 +2,15 @@ from aws_cdk import (
     Stack,
     RemovalPolicy,
     CfnOutput,
+    Duration,
     aws_s3 as s3,
     aws_dynamodb as dynamodb,
     aws_lambda as _lambda,
     aws_appsync as appsync,
     aws_cognito as cognito,
     aws_iam as iam,
+    aws_cloudwatch as cloudwatch,
+    aws_logs as logs,
 )
 from constructs import Construct
 import os
@@ -98,6 +101,16 @@ class InfrastructureStack(Stack):
                 "sts:AssumeRoleWithWebIdentity"
             )
         )
+
+        authenticated_role.add_to_policy(iam.PolicyStatement(
+            effect=iam.Effect.ALLOW,
+            actions=[
+                "s3:PutObject",
+                "s3:GetObject",
+                "s3:DeleteObject"
+            ],
+            resources=[f"arn:aws:s3:::audiobyte-music-6203/music/${{cognito-identity.amazonaws.com:sub}}/*"]
+        ))
 
         cognito.CfnIdentityPoolRoleAttachment(self, "IdentityPoolRoleAttachment",
             identity_pool_id=identity_pool.ref,
@@ -253,6 +266,153 @@ class InfrastructureStack(Stack):
             field_name="deleteMusic"
         )
 
+
+        dashboard = cloudwatch.Dashboard(self, "AudioByteDashboard",
+            dashboard_name="AudioByte-Monitoring-6203"
+        )
+
+        # metrics
+        dashboard.add_widgets(
+            cloudwatch.GraphWidget(
+                title="Lambda Invocations",
+                left=[
+                    upload_fn.metric_invocations(statistic="Sum", period=Duration.minutes(5)),
+                    list_fn.metric_invocations(statistic="Sum", period=Duration.minutes(5)),
+                    list_all_fn.metric_invocations(statistic="Sum", period=Duration.minutes(5)),
+                    delete_fn.metric_invocations(statistic="Sum", period=Duration.minutes(5))
+                ],
+                width=12
+            ),
+            cloudwatch.GraphWidget(
+                title="Lambda Errors",
+                left=[
+                    upload_fn.metric_errors(statistic="Sum", period=Duration.minutes(5)),
+                    list_fn.metric_errors(statistic="Sum", period=Duration.minutes(5)),
+                    list_all_fn.metric_errors(statistic="Sum", period=Duration.minutes(5)),
+                    delete_fn.metric_errors(statistic="Sum", period=Duration.minutes(5))
+                ],
+                width=12
+            )
+        )
+
+        dashboard.add_widgets(
+            cloudwatch.GraphWidget(
+                title="Lambda Duration",
+                left=[
+                    upload_fn.metric_duration(statistic="Average", period=Duration.minutes(5)),
+                    list_fn.metric_duration(statistic="Average", period=Duration.minutes(5)),
+                    list_all_fn.metric_duration(statistic="Average", period=Duration.minutes(5)),
+                    delete_fn.metric_duration(statistic="Average", period=Duration.minutes(5))
+                ],
+                width=12
+            ),
+            cloudwatch.GraphWidget(
+                title="Lambda Throttles",
+                left=[
+                    upload_fn.metric_throttles(statistic="Sum", period=Duration.minutes(5)),
+                    list_fn.metric_throttles(statistic="Sum", period=Duration.minutes(5)),
+                    list_all_fn.metric_throttles(statistic="Sum", period=Duration.minutes(5)),
+                    delete_fn.metric_throttles(statistic="Sum", period=Duration.minutes(5))
+                ],
+                width=12
+            )
+        )
+
+        # DynamoDB metrics
+        dashboard.add_widgets(
+            cloudwatch.GraphWidget(
+                title="DynamoDB Read/Write Capacity",
+                left=[
+                    music_table.metric_consumed_read_capacity_units(statistic="Sum", period=Duration.minutes(5)),
+                ],
+                right=[
+                    music_table.metric_consumed_write_capacity_units(statistic="Sum", period=Duration.minutes(5))
+                ],
+                width=12
+            ),
+            cloudwatch.GraphWidget(
+                title="DynamoDB User Errors",
+                left=[
+                    music_table.metric_user_errors(statistic="Sum", period=Duration.minutes(5))
+                ],
+                width=12
+            )
+        )
+
+        # AppSync metrics
+        appsync_4xx = cloudwatch.Metric(
+            namespace="AWS/AppSync",
+            metric_name="4XXError",
+            dimensions_map={"GraphQLAPIId": graphql_api.api_id},
+            statistic="Sum",
+            period=Duration.minutes(5)
+        )
+
+        appsync_5xx = cloudwatch.Metric(
+            namespace="AWS/AppSync",
+            metric_name="5XXError",
+            dimensions_map={"GraphQLAPIId": graphql_api.api_id},
+            statistic="Sum",
+            period=Duration.minutes(5)
+        )
+
+        appsync_latency = cloudwatch.Metric(
+            namespace="AWS/AppSync",
+            metric_name="Latency",
+            dimensions_map={"GraphQLAPIId": graphql_api.api_id},
+            statistic="Average",
+            period=Duration.minutes(5)
+        )
+
+        dashboard.add_widgets(
+            cloudwatch.GraphWidget(
+                title="AppSync API Errors",
+                left=[appsync_4xx, appsync_5xx],
+                width=12
+            ),
+            cloudwatch.GraphWidget(
+                title="AppSync API Latency (ms)",
+                left=[appsync_latency],
+                width=12
+            )
+        )
+
+        # S3 metrics
+        s3_bucket_size = cloudwatch.Metric(
+            namespace="AWS/S3",
+            metric_name="BucketSizeBytes",
+            dimensions_map={
+                "BucketName": music_bucket.bucket_name,
+                "StorageType": "StandardStorage"
+            },
+            statistic="Average",
+            period=Duration.days(1)
+        )
+
+        s3_object_count = cloudwatch.Metric(
+            namespace="AWS/S3",
+            metric_name="NumberOfObjects",
+            dimensions_map={
+                "BucketName": music_bucket.bucket_name,
+                "StorageType": "AllStorageTypes"
+            },
+            statistic="Average",
+            period=Duration.days(1)
+        )
+
+        dashboard.add_widgets(
+            cloudwatch.GraphWidget(
+                title="S3 Bucket Storage",
+                left=[s3_bucket_size],
+                width=12
+            ),
+            cloudwatch.GraphWidget(
+                title="S3 Object Count",
+                left=[s3_object_count],
+                width=12
+            )
+        )
+
         CfnOutput(self, "GraphQLApiUrl",
             value=graphql_api.graphql_url,
             description="GraphQL API URL"
@@ -291,4 +451,9 @@ class InfrastructureStack(Stack):
         CfnOutput(self, "DeleteFunctionArn",
             value=delete_fn.function_arn,
             description="Delete Lambda Function ARN"
+        )
+
+        CfnOutput(self, "CloudWatchDashboardUrl",
+            value=f"https://console.aws.amazon.com/cloudwatch/home?region={self.region}#dashboards:name={dashboard.dashboard_name}",
+            description="CloudWatch Dashboard URL"
         )

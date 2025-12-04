@@ -1,6 +1,6 @@
-"""
-Clear all users from Cognito User Pool and their associated music
-"""
+
+#Clear all users from Cognito User Pool and their music
+
 
 import boto3
 import sys
@@ -10,7 +10,7 @@ DYNAMODB_TABLE = "audiobyte-metadata-6203"
 S3_BUCKET = "audiobyte-music-6203"
 
 def get_user_sub(cognito, username):
-    """Get the user's sub (user_id) from Cognito"""
+
     try:
         response = cognito.admin_get_user(
             UserPoolId=USER_POOL_ID,
@@ -20,11 +20,10 @@ def get_user_sub(cognito, username):
             if attr['Name'] == 'sub':
                 return attr['Value']
     except Exception as e:
-        print(f"  Warning: Could not get sub for {username}: {str(e)}")
+        print(f" Warning: Cant get sub for {username}: {str(e)}")
     return None
 
 def delete_user_music(user_sub, username):
-    """Delete all music files and metadata for a user"""
     dynamodb = boto3.resource('dynamodb')
     s3 = boto3.client('s3')
     table = dynamodb.Table(DYNAMODB_TABLE)
@@ -45,24 +44,24 @@ def delete_user_music(user_sub, username):
             title = item.get('title', 'Unknown')
             s3_key = item.get('s3_key', f"music/{user_sub}/{music_id}.mp3")
             
-            print(f"    - Deleting: {title}")
+            print(f"  - Deleting: {title}")
             
             try:
                 s3.delete_object(Bucket=S3_BUCKET, Key=s3_key)
-                print(f"      ✓ Deleted from S3: {s3_key}")
+                print(f" Deleted from S3: {s3_key}")
             except Exception as e:
-                print(f"      ✗ Failed to delete from S3: {str(e)}")
+                print(f" Failed to delete from S3: {str(e)}")
             
             try:
                 table.delete_item(Key={'music_id': music_id})
-                print(f"      ✓ Deleted from DynamoDB")
+                print(f" Deleted from DynamoDB")
             except Exception as e:
-                print(f"      ✗ Failed to delete from DynamoDB: {str(e)}")
+                print(f" Failed to delete from DynamoDB: {str(e)}")
         
         return len(items)
         
     except Exception as e:
-        print(f"  ✗ Error deleting music: {str(e)}")
+        print(f" Error deleting music: {str(e)}")
         return 0
 
 def clear_all_users():
@@ -95,16 +94,16 @@ def clear_all_users():
                 tracks_deleted = delete_user_music(user_sub, username)
                 total_tracks_deleted += tracks_deleted
             else:
-                print(f"  ⚠ Skipping music deletion (no user_id found)")
+                print(f" Skipping music deletion (no user_id found)")
             
             try:
                 cognito.admin_delete_user(
                     UserPoolId=USER_POOL_ID,
                     Username=username
                 )
-                print(f"✓ Successfully deleted user: {username}")
+                print(f" Successfully deleted user: {username}")
             except Exception as e:
-                print(f"✗ Failed to delete user {username}: {str(e)}")
+                print(f" Failed to delete user {username}: {str(e)}")
             
             print()
         
